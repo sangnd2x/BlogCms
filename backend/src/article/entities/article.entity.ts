@@ -1,0 +1,48 @@
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { BaseEntity } from '../../config/base.entity';
+import { User } from '../../user/entities/user.entity';
+
+export enum ArticleStatus {
+  DRAFT = 'DRAFT',
+  PUBLISHED = 'PUBLISHED',
+  ARCHIVED = 'ARCHIVED',
+}
+
+@Entity()
+export class Article extends BaseEntity {
+  @Column()
+  title: string;
+
+  @Column()
+  slug: string;
+
+  @Column({ type: 'text' })
+  content: string;
+
+  @Column({ type: 'text', nullable: true })
+  excerpt: string;
+
+  // TODO: Add tag
+
+  @Column({ nullable: true })
+  featured_image: string;
+
+  @Column({ type: 'enum', enum: ArticleStatus, default: ArticleStatus.DRAFT })
+  status: ArticleStatus;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  published_at: Date;
+
+  @Column({ default: 0 })
+  views_count: number;
+
+  @Column({ default: true })
+  is_active: boolean;
+
+  @Column({ type: 'uuid' })
+  author_id: string;
+
+  @ManyToOne(() => User, (user) => user.articles, { nullable: false })
+  @JoinColumn({ name: 'author_id' })
+  author: User;
+}

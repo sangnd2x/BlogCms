@@ -29,6 +29,6 @@ export class UserService {
   }
 
   async findOne(id: string) {
-    return this.userRepository.findOneBy({ id });
+    return this.userRepository.findOneBy({ id, is_active: true });
   }
 }

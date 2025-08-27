@@ -1,7 +1,7 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { User } from '../../user/entities/user.entity';
 
-interface RequestWithUser extends Request {
+export interface RequestWithUser extends Request {
   user: User;
 }
 

@@ -1,37 +1,25 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ArticleQueryParams } from './params/article-query.param';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article, ArticleStatus } from './entities/article.entity';
 import { Repository } from 'typeorm';
-import { UserService } from '../user/user.service';
-import { UserRole } from '../user/entities/user.entity';
 
 @Injectable()
 export class ArticleService {
   constructor(
     @InjectRepository(Article)
     private readonly articleRepository: Repository<Article>,
-    private readonly userService: UserService,
   ) {}
   async create(createArticleDto: CreateArticleDto, userId: string) {
-    const author = await this.userService.findOne(userId);
-
-    if (!author || author.user_role !== UserRole.ADMIN) {
-      throw new ForbiddenException('Only admin users can create post');
-    }
-
     const slug = createArticleDto.title.replace(/\s+/g, '-');
 
     const post = this.articleRepository.create({
       ...createArticleDto,
       slug: slug,
-      author_id: author.id,
+      author_id: userId,
+      created_by: userId,
       published_at:
         createArticleDto.status === ArticleStatus.PUBLISHED
           ? createArticleDto.published_at || new Date()
@@ -56,6 +44,7 @@ export class ArticleService {
     const query = this.articleRepository
       .createQueryBuilder('article')
       .leftJoinAndSelect('article.author', 'author')
+      .leftJoinAndSelect('article.category', 'category')
       .where('article.is_active = :is_active', { is_active: true });
 
     if (search) {
@@ -117,7 +106,7 @@ export class ArticleService {
         title: slug.replace(/-/g, ' '),
         is_active: true,
       },
-      relations: ['author'],
+      relations: ['author', 'category'],
     });
 
     if (!article) {
@@ -133,22 +122,22 @@ export class ArticleService {
   }
 
   async findOne(id: string) {
-    return await this.articleRepository.findOne({
+    const article = await this.articleRepository.findOne({
       where: {
         id,
         is_active: true,
       },
-      relations: ['author'],
+      relations: ['author', 'category'],
     });
+
+    if (!article) {
+      throw new NotFoundException('Article not found');
+    }
+
+    return article;
   }
 
   async update(id: string, updateArticleDto: UpdateArticleDto, userId: string) {
-    const author = await this.userService.findOne(userId);
-
-    if (!author || author.user_role !== UserRole.ADMIN) {
-      throw new ForbiddenException('Only admin users can update post');
-    }
-
     const article = await this.findOne(id);
 
     if (!article) {
@@ -163,24 +152,24 @@ export class ArticleService {
       updateArticleDto.published_at =
         updateArticleDto.published_at || new Date().toISOString();
     }
+    updateArticleDto.updated_by = userId;
 
     await this.articleRepository.update(id, updateArticleDto);
     return this.findOne(id);
   }
 
   async remove(id: string, userId: string) {
-    const author = await this.userService.findOne(userId);
-
-    if (!author || author.user_role !== UserRole.ADMIN) {
-      throw new ForbiddenException('Only admin users can delete post');
-    }
-
     const article = await this.findOne(id);
 
     if (!article) {
       throw new NotFoundException('Article not found');
     }
 
-    await this.articleRepository.update(id, { is_active: false });
+    return await this.articleRepository.update(id, {
+      is_active: false,
+      is_deleted: true,
+      deleted_by: userId,
+      deleted_on: new Date(),
+    });
   }
 }

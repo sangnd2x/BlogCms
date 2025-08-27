@@ -1,4 +1,10 @@
-import { IsDateString, IsEnum, IsOptional, IsString } from 'class-validator';
+import {
+  IsDateString,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { ArticleStatus } from '../entities/article.entity';
 
 export class CreateArticleDto {
@@ -19,4 +25,12 @@ export class CreateArticleDto {
   @IsOptional()
   @IsDateString()
   published_at?: string;
+
+  @IsOptional()
+  @IsString({ each: true })
+  tags?: string[];
+
+  @IsOptional()
+  @IsUUID()
+  category_id?: string;
 }

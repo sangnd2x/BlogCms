@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../config/base.entity';
 import { User } from '../../user/entities/user.entity';
+import { Category } from '../../category/entities/category.entity';
 
 export enum ArticleStatus {
   DRAFT = 'DRAFT',
@@ -22,7 +23,8 @@ export class Article extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   excerpt: string;
 
-  // TODO: Add tag
+  @Column({ type: 'text', array: true, default: [] })
+  tags: string[];
 
   @Column({ nullable: true })
   featured_image: string;
@@ -45,4 +47,13 @@ export class Article extends BaseEntity {
   @ManyToOne(() => User, (user) => user.articles, { nullable: false })
   @JoinColumn({ name: 'author_id' })
   author: User;
+
+  @ManyToOne(() => Category, (category) => category.articles, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'category_id' })
+  category: Category;
+
+  @Column({ type: 'uuid', nullable: true })
+  category_id: string;
 }

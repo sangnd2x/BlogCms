@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../config/base.entity';
 import { User } from '../../user/entities/user.entity';
 import { Category } from '../../category/entities/category.entity';
+import { Media } from '../../media/entities/media.entity';
 
 export enum ArticleStatus {
   DRAFT = 'DRAFT',
@@ -56,4 +57,7 @@ export class Article extends BaseEntity {
 
   @Column({ type: 'uuid', nullable: true })
   category_id: string;
+
+  @OneToMany(() => Media, (media) => media.article)
+  medias: Media[];
 }

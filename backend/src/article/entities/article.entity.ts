@@ -3,6 +3,7 @@ import { BaseEntity } from '../../config/base.entity';
 import { User } from '../../user/entities/user.entity';
 import { Category } from '../../category/entities/category.entity';
 import { Media } from '../../media/entities/media.entity';
+import { Comment } from '../../comment/entities/comment.entity';
 
 export enum ArticleStatus {
   DRAFT = 'DRAFT',
@@ -42,6 +43,7 @@ export class Article extends BaseEntity {
   @Column({ default: true })
   is_active: boolean;
 
+  // User Relationship
   @Column({ type: 'uuid' })
   author_id: string;
 
@@ -49,6 +51,7 @@ export class Article extends BaseEntity {
   @JoinColumn({ name: 'author_id' })
   author: User;
 
+  // Category Relationship
   @ManyToOne(() => Category, (category) => category.articles, {
     nullable: true,
   })
@@ -58,6 +61,11 @@ export class Article extends BaseEntity {
   @Column({ type: 'uuid', nullable: true })
   category_id: string;
 
+  // Media Relationship
   @OneToMany(() => Media, (media) => media.article)
   medias: Media[];
+
+  // Comment Relation
+  @OneToMany(() => Comment, (comment) => comment.article)
+  comments: Comment[];
 }

@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { ArticleModule } from './article/article.module';
 import { CategoryModule } from './category/category.module';
 import { MediaModule } from './media/media.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { MediaModule } from './media/media.module';
     ArticleModule,
     CategoryModule,
     MediaModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

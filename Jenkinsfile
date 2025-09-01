@@ -3,12 +3,22 @@ pipeline {
     
     environment {
         PROJECT_NAME = 'blogcms'
+        NODE_ENV = 'production'
+        PORT = '3000'
         DATABASE_HOST = 'postgres'
         DATABASE_PORT = '5432'
         DATABASE_NAME = 'blogcms_prod'
         DATABASE_USER = 'bloguser'
+        API_PREFIX = 'api/v1'
+        CORS_ORIGINS = 'http://192.168.1.128:3200,http://192.168.1.128:3000'
+        MAX_FILE_SIZE = '5242880'
+        UPLOAD_DIR = './uploads'
+        JWT_EXPIRES_IN = '1d'
+        
+        // Frontend variables
         NEXT_PUBLIC_API_URL = 'http://192.168.1.128:3000'
         NEXT_PUBLIC_APP_NAME = 'Blog CMS'
+        NEXT_PUBLIC_APP_VERSION = '1.0.0'
     }
     
     stages {
@@ -30,7 +40,7 @@ pipeline {
                             echo "Creating production environment files with secrets..."
                             
                             # Create backend .env file
-                            cat > backend/.env << EOF
+                            cat > environments/.env.production.backend << EOF
 NODE_ENV=production
 PORT=3000
 DATABASE_HOST=${DATABASE_HOST}
@@ -49,7 +59,7 @@ LOG_LEVEL=info
 EOF
 
                             # Create frontend .env file
-                            cat > frontend/.env << EOF
+                            cat > environments/.env.production.frontend << EOF
 NODE_ENV=production
 PORT=3200
 NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
@@ -91,8 +101,8 @@ EOF
     post {
         always {
             sh '''
-                rm -f backend/.env
-                rm -f frontend/.env
+                rm -f environments/.env.production.backend
+                rm -f environments/.env.production.frontend
             '''
         }
     }

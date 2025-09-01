@@ -1,0 +1,8 @@
+# Deployment
+logs/
+backups/
+environments/.env.production*
+environments/.env.staging*
+
+# Docker
+.docker/

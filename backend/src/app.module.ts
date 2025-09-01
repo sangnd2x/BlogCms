@@ -9,6 +9,8 @@ import { ArticleModule } from './article/article.module';
 import { CategoryModule } from './category/category.module';
 import { MediaModule } from './media/media.module';
 import { CommentModule } from './comment/comment.module';
+import { HealthController } from './health/health.controller';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -35,8 +37,9 @@ import { CommentModule } from './comment/comment.module';
     CategoryModule,
     MediaModule,
     CommentModule,
+    HealthModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, HealthController],
   providers: [AppService],
 })
 export class AppModule {}

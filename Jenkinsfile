@@ -82,7 +82,7 @@ EOF
         stage('Build & Deploy') {
             steps {
                 sh '''
-                    docker-compose -f docker-compose.prod.yml build
+                    docker-compose -f docker-compose.production.yml build
                     ./scripts/deploy.sh production
                 '''
             }

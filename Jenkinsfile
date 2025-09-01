@@ -23,7 +23,7 @@ pipeline {
                 script {
                     // Use Jenkins credentials for sensitive data
                     withCredentials([
-                        string(credentialsId: 'cms-db-password', variable: 'DB_PASS'),
+                        string(credentialsId: 'cms-db-password', variable: 'DATABASE_PASSWORD'),
                         string(credentialsId: 'cms-jwt-secret', variable: 'JWT_SECRET')
                     ]) {
                         sh '''
@@ -37,8 +37,8 @@ DATABASE_HOST=${DATABASE_HOST}
 DATABASE_PORT=${DATABASE_PORT}
 DATABASE_NAME=${DATABASE_NAME}
 DATABASE_USER=${DATABASE_USER}
-DATABASE_PASSWORD=${DB_PASS}
-DATABASE_URL=postgresql://${DATABASE_USER}:${DB_PASS}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
+DATABASE_PASSWORD=${DATABASE_PASSWORD}
+DATABASE_URL=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
 JWT_SECRET=${JWT_SECRET}
 JWT_EXPIRES_IN=24h
 API_PREFIX=api/v1

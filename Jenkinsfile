@@ -31,13 +31,12 @@ pipeline {
         stage('Setup Environment') {
             steps {
                 script {
-                    // Use Jenkins credentials for sensitive data
                     withCredentials([
                         string(credentialsId: 'cms-db-password', variable: 'DATABASE_PASSWORD'),
                         string(credentialsId: 'cms-jwt-secret', variable: 'JWT_SECRET')
                     ]) {
                         sh '''
-                            echo "Creating production environment files with secrets..."
+                            echo "Creating production environment files..."
                             
                             # Create backend .env file
                             cat > environments/.env.production.backend << EOF
@@ -73,6 +72,8 @@ EOF
 
                             chmod +x scripts/*.sh
                             mkdir -p logs uploads
+                            
+                            echo "Environment files created successfully!"
                         '''
                     }
                 }
@@ -81,29 +82,118 @@ EOF
         
         stage('Build & Deploy') {
             steps {
-                sh '''
-                    docker-compose -f docker-compose.production.yml build
-                    ./scripts/deploy.sh production
-                '''
+                script {
+                    withCredentials([
+                        string(credentialsId: 'cms-db-password', variable: 'DATABASE_PASSWORD')
+                    ]) {
+                        sh '''
+                            echo "Building and deploying with DATABASE_PASSWORD..."
+                            
+                            # Export DATABASE_PASSWORD so docker-compose can use it
+                            export DATABASE_PASSWORD="${DATABASE_PASSWORD}"
+                            
+                            # Use correct compose file name (check if it's .prod.yml or .production.yml)
+                            if [ -f "docker-compose.prod.yml" ]; then
+                                COMPOSE_FILE="docker-compose.prod.yml"
+                            elif [ -f "docker-compose.production.yml" ]; then
+                                COMPOSE_FILE="docker-compose.production.yml"
+                            else
+                                echo "Error: No production compose file found!"
+                                exit 1
+                            fi
+                            
+                            echo "Using compose file: $COMPOSE_FILE"
+                            
+                            # Build images
+                            docker-compose -f "$COMPOSE_FILE" build
+                            
+                            # Stop existing services (if any)
+                            docker-compose -f "$COMPOSE_FILE" down || echo "No existing services to stop"
+                            
+                            # Start services
+                            docker-compose -f "$COMPOSE_FILE" up -d
+                            
+                            echo "Services started successfully!"
+                            docker-compose -f "$COMPOSE_FILE" ps
+                        '''
+                    }
+                }
             }
         }
         
         stage('Health Check') {
             steps {
                 sh '''
-                    sleep 30
-                    ./scripts/health-check.sh production
+                    echo "Waiting for services to start..."
+                    sleep 45
+                    
+                    echo "Checking service status..."
+                    docker ps | grep blogcms || echo "No blogcms containers found"
+                    
+                    echo "Testing backend connectivity..."
+                    for i in {1..5}; do
+                        if curl -f -s --max-time 5 "http://localhost:3000/health" > /dev/null 2>&1; then
+                            echo "✅ Backend is responding"
+                            break
+                        else
+                            echo "⏳ Backend not ready, attempt $i/5"
+                            sleep 10
+                        fi
+                    done
+                    
+                    echo "Testing frontend connectivity..."
+                    for i in {1..5}; do
+                        if curl -f -s --max-time 5 "http://localhost:3200" > /dev/null 2>&1; then
+                            echo "✅ Frontend is responding"
+                            break
+                        else
+                            echo "⏳ Frontend not ready, attempt $i/5"
+                            sleep 10
+                        fi
+                    done
+                    
+                    echo "Deployment health check completed!"
                 '''
             }
         }
     }
     
     post {
+        success {
+            echo '🎉 Deployment successful!'
+            sh '''
+                echo "=== DEPLOYMENT SUMMARY ==="
+                docker ps | grep blogcms
+                echo "Backend: http://192.168.1.128:3000"
+                echo "Frontend: http://192.168.1.128:3200"
+            '''
+        }
+        failure {
+            echo '💥 Deployment failed!'
+            sh '''
+                echo "=== DEBUGGING INFO ==="
+                echo "Container status:"
+                docker ps -a | grep blogcms || echo "No blogcms containers found"
+                
+                echo "=== LOGS ==="
+                docker logs blogcms_backend_prod --tail 20 || echo "Backend logs not available"
+                docker logs blogcms_frontend_prod --tail 20 || echo "Frontend logs not available" 
+                docker logs blogcms_postgres_prod --tail 20 || echo "Postgres logs not available"
+            '''
+        }
         always {
             sh '''
                 rm -f environments/.env.production.backend
                 rm -f environments/.env.production.frontend
             '''
         }
+    }
+    
+    parameters {
+        booleanParam(
+            name: 'CLEAN_DEPLOY',
+            defaultValue: false,
+            description: 'Stop and remove existing containers before deploying'
+        )
     }
 }

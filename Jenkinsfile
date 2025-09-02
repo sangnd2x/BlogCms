@@ -62,7 +62,7 @@ EOF
                             
                             echo "Environment file created successfully!"
                             echo "Checking .env.prod.backend content:"
-                            head -5 .env.prod.backend
+                            cat .env.prod.backend
                         '''
                     }
                 }

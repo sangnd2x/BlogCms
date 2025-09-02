@@ -7,9 +7,8 @@ pipeline {
         PORT = '3000'
         POSTGRES_HOST = 'postgres'
         POSTGRES_PORT = '5432'
-        POSTGRES_NAME = 'blogcms_prod'
+        POSTGRES_DB = 'blogcms_prod'
         POSTGRES_USER = 'bloguser'
-        POSTGRES_DB = 'blogcms-prod'
         API_PREFIX = 'api/v1'
         CORS_ORIGINS = 'http://192.168.1.128:3200,http://192.168.1.128:3000'
         MAX_FILE_SIZE = '5242880'
@@ -39,30 +38,32 @@ pipeline {
                         sh '''
                             echo "Creating production environment files..."
                             
-                            # Create .env.prod.backend file
-                            cat > .env.prod.backend << EOF
-                                NODE_ENV=${NODE_ENV}
-                                PORT=${PORT}
-                                POSTGRES_DB=${POSTGRES_DB}
-                                POSTGRES_HOST=${POSTGRES_HOST}
-                                POSTGRES_PORT=${POSTGRES_PORT}
-                                POSTGRES_NAME=${POSTGRES_NAME}
-                                POSTGRES_USER=${POSTGRES_USER}
-                                POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-                                DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_NAME}
-                                JWT_SECRET=${JWT_SECRET}
-                                JWT_EXPIRES_IN=24h
-                                API_PREFIX=api/v1
-                                CORS_ORIGINS=${CORS_ORIGINS}
-                                MAX_FILE_SIZE=10485760
-                                UPLOAD_DIR=./uploads
-                                LOG_LEVEL=info
-                                EOF
-
+                            # Create .env.prod.backend file - FIXED: Proper EOF closing
+                            cat > .env.prod.backend << 'EOF'
+NODE_ENV=production
+PORT=3000
+POSTGRES_DB=blogcms_prod
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_USER=bloguser
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+DATABASE_URL=postgresql://bloguser:${POSTGRES_PASSWORD}@postgres:5432/blogcms_prod
+JWT_SECRET=${JWT_SECRET}
+JWT_EXPIRES_IN=24h
+API_PREFIX=api/v1
+CORS_ORIGINS=http://192.168.1.128:3200
+MAX_FILE_SIZE=10485760
+UPLOAD_DIR=./uploads
+LOG_LEVEL=info
+EOF
+                            
+                            # Now run the chmod command AFTER the EOF
                             chmod +x scripts/*.sh
                             mkdir -p logs uploads
                             
-                            echo "Environment files created successfully!"
+                            echo "Environment file created successfully!"
+                            echo "Checking .env.prod.backend content:"
+                            head -5 .env.prod.backend
                         '''
                     }
                 }
@@ -76,35 +77,23 @@ pipeline {
                         string(credentialsId: 'cms-db-password', variable: 'POSTGRES_PASSWORD')
                     ]) {
                         sh '''
-                            echo "Building and deploying with POSTGRES_PASSWORD..."
+                            echo "Building and deploying..."
                             
-                            # Export POSTGRES_PASSWORD so docker-compose can use it
+                            # Export environment variables for docker-compose
                             export POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
-                            docker compose down -v || echo "No existing services to stop"
+                            export POSTGRES_DB="blogcms_prod"
+                            export POSTGRES_USER="bloguser"
                             
-                            # Use correct compose file name (check if it's .prod.yml or .production.yml)
-                            if [ -f "docker-compose.prod.yml" ]; then
-                                COMPOSE_FILE="docker-compose.prod.yml"
-                            elif [ -f "docker-compose.production.yml" ]; then
-                                COMPOSE_FILE="docker-compose.production.yml"
-                            else
-                                echo "Error: No production compose file found!"
-                                exit 1
-                            fi
+                            echo "Environment variables set"
                             
-                            echo "Using compose file: $COMPOSE_FILE"
+                            # Stop any existing services
+                            docker-compose -f docker-compose.prod.yml down || echo "No existing services"
                             
-                            # Build images
-                            docker-compose -f "$COMPOSE_FILE" build
+                            # Build and start services
+                            docker-compose -f docker-compose.prod.yml up -d --build
                             
-                            # Stop existing services (if any)
-                            docker-compose -f "$COMPOSE_FILE" down || echo "No existing services to stop"
-                            
-                            # Start services
-                            docker-compose -f "$COMPOSE_FILE" up -d
-                            
-                            echo "Services started successfully!"
-                            docker-compose -f "$COMPOSE_FILE" ps
+                            echo "Services started!"
+                            docker-compose -f docker-compose.prod.yml ps
                         '''
                     }
                 }
@@ -114,24 +103,26 @@ pipeline {
         stage('Health Check') {
             steps {
                 sh '''
-                    echo "Waiting for services to start..."
-                    sleep 45
+                    echo "Waiting for backend to start..."
+                    sleep 30
                     
-                    echo "Checking service status..."
-                    docker ps | grep blogcms || echo "No blogcms containers found"
-                    
-                    echo "Testing backend connectivity..."
-                    for i in {1..5}; do
-                        if curl -f -s --max-time 5 "http://localhost:3000/health" > /dev/null 2>&1; then
-                            echo "✅ Backend is responding"
+                    echo "Testing backend health..."
+                    for i in {1..10}; do
+                        if curl -f -s --max-time 5 "http://localhost:3000/api/v1/health" > /dev/null 2>&1; then
+                            echo "✅ Backend health check passed!"
+                            curl -s "http://localhost:3000/api/v1/health"
                             break
                         else
-                            echo "⏳ Backend not ready, attempt $i/5"
+                            echo "⏳ Backend not ready, attempt $i/10"
+                            if [ $i -eq 10 ]; then
+                                echo "❌ Backend health check failed after 10 attempts"
+                                echo "Backend logs:"
+                                docker logs blogcms_backend_prod --tail 30
+                                exit 1
+                            fi
                             sleep 10
                         fi
                     done
-                    
-                    echo "Deployment health check completed!"
                 '''
             }
         }
@@ -139,11 +130,12 @@ pipeline {
     
     post {
         success {
-            echo '🎉 Deployment successful!'
+            echo '🎉 Backend deployment successful!'
             sh '''
                 echo "=== DEPLOYMENT SUMMARY ==="
                 docker ps | grep blogcms
-                echo "Backend: http://192.168.1.128:3000"
+                echo "Backend API: http://192.168.1.128:3000/api/v1"
+                echo "Health Check: http://192.168.1.128:3000/api/v1/health"
             '''
         }
         failure {
@@ -151,11 +143,21 @@ pipeline {
             sh '''
                 echo "=== DEBUGGING INFO ==="
                 echo "Container status:"
-                docker ps -a | grep blogcms || echo "No blogcms containers found"
+                docker ps -a | grep blogcms || echo "No containers found"
                 
-                echo "=== LOGS ==="
-                docker logs blogcms_backend_prod --tail 20 || echo "Backend logs not available"
-                docker logs blogcms_postgres_prod --tail 20 || echo "Postgres logs not available"
+                echo "=== BACKEND LOGS ==="
+                docker logs blogcms_backend_prod --tail 50 || echo "No backend logs"
+                
+                echo "=== POSTGRES LOGS ==="
+                docker logs blogcms_postgres --tail 20 || echo "No postgres logs"
+                
+                echo "=== ENVIRONMENT FILE CHECK ==="
+                if [ -f ".env.prod.backend" ]; then
+                    echo "Environment file exists, first 10 lines:"
+                    head -10 .env.prod.backend
+                else
+                    echo "Environment file not found"
+                fi
             '''
         }
         always {
@@ -169,7 +171,7 @@ pipeline {
         booleanParam(
             name: 'CLEAN_DEPLOY',
             defaultValue: false,
-            description: 'Stop and remove existing containers before deploying'
+            description: 'Clean deployment - remove all containers and volumes'
         )
     }
 }

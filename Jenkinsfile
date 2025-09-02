@@ -105,7 +105,7 @@ EOF
             steps {
                 sh '''
                     echo "Waiting for backend to start..."
-                    sleep 10
+                    sleep 30
                     
                     echo "Testing backend health..."
                     if curl -f -s --max-time 5 "http://localhost:3000/api/v1/health" > /dev/null 2>&1; then

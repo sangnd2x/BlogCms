@@ -57,8 +57,7 @@ UPLOAD_DIR=./uploads
 LOG_LEVEL=info
 EOF
                             
-                            # Now run the chmod command AFTER the EOF
-                            chmod +x scripts/*.sh
+
                             mkdir -p logs uploads
                             
                             echo "Environment file created successfully!"

@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     environment {
         PROJECT_NAME = 'blogcms'
         NODE_ENV = 'production'
@@ -14,20 +14,20 @@ pipeline {
         MAX_FILE_SIZE = '5242880'
         UPLOAD_DIR = './uploads'
         JWT_EXPIRES_IN = '1d'
-        
+
         // Frontend variables
         NEXT_PUBLIC_API_URL = 'http://192.168.1.128:3000'
         NEXT_PUBLIC_APP_NAME = 'Blog CMS'
         NEXT_PUBLIC_APP_VERSION = '1.0.0'
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-        
+
         stage('Setup Environment') {
             steps {
                 script {
@@ -37,7 +37,7 @@ pipeline {
                     ]) {
                         sh '''
                             echo "Creating production environment files..."
-                            
+
                             # Create .env.prod.backend file - FIXED: Proper EOF closing
                             cat > .env.prod.backend << 'EOF'
 NODE_ENV=production
@@ -56,10 +56,9 @@ MAX_FILE_SIZE=10485760
 UPLOAD_DIR=./uploads
 LOG_LEVEL=info
 EOF
-                            
 
                             mkdir -p logs uploads
-                            
+
                             echo "Environment file created successfully!"
                             echo "Checking .env.prod.backend content:"
                             cat .env.prod.backend
@@ -68,7 +67,7 @@ EOF
                 }
             }
         }
-        
+
         stage('Build & Deploy') {
             steps {
                 script {
@@ -78,21 +77,21 @@ EOF
                     ]) {
                         sh '''
                             echo "Building and deploying..."
-                            
+
                             # Export environment variables for docker-compose
                             export POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
                             export POSTGRES_DB="blogcms_prod"
                             export POSTGRES_USER="bloguser"
                             export JWT_SECRET=${JWT_SECRET}
-                            
+
                             echo "Environment variables set"
-                            
+
                             # Stop any existing services
-                            docker-compose -f docker-compose.prod.yml stop || echo "No existing services"
-                            
+                            docker-compose -f docker-compose.prod.yml down -v || echo "No existing services"
+
                             # Build and start services
                             docker-compose -f docker-compose.prod.yml up -d --build
-                            
+
                             echo "Services started!"
                             docker-compose -f docker-compose.prod.yml ps
                         '''
@@ -109,29 +108,29 @@ EOF
                     ]) {
                         sh '''
                             echo "Running database migrations..."
-                            
+
                             # Wait for database to be ready
                             sleep 10
-                            
+
                             # Run migrations inside the backend container
                             docker exec blogcms_backend_prod npm run migration:run
-                            
+
                             echo "Migrations completed successfully!"
                         '''
                     }
                 }
             }
         }
-        
+
         stage('Health Check') {
             steps {
                 sh '''
                     echo "Waiting for backend to start..."
                     sleep 60
-                    
+
                     echo "Testing backend health..."
                     curl -s "http://localhost:3000/api/v1/health" || echo "Health check failed but continuing..."
-                    
+
                     echo "Backend should be accessible at: http://192.168.1.128:3000/api/v1/health"
                     echo "Containers status:"
                     docker ps | grep blogcms
@@ -139,7 +138,7 @@ EOF
             }
         }
     }
-    
+
     post {
         success {
             echo '🎉 Backend deployment successful!'
@@ -156,13 +155,13 @@ EOF
                 echo "=== DEBUGGING INFO ==="
                 echo "Container status:"
                 docker ps -a | grep blogcms || echo "No containers found"
-                
+
                 echo "=== BACKEND LOGS ==="
                 docker logs blogcms_backend_prod --tail 50 || echo "No backend logs"
-                
+
                 echo "=== POSTGRES LOGS ==="
                 docker logs blogcms_postgres --tail 20 || echo "No postgres logs"
-                
+
                 echo "=== ENVIRONMENT FILE CHECK ==="
                 if [ -f ".env.prod.backend" ]; then
                     echo "Environment file exists, first 10 lines:"
@@ -178,7 +177,7 @@ EOF
             '''
         }
     }
-    
+
     parameters {
         booleanParam(
             name: 'CLEAN_DEPLOY',

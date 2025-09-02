@@ -9,6 +9,7 @@ pipeline {
         POSTGRES_PORT = '5432'
         POSTGRES_NAME = 'blogcms_prod'
         POSTGRES_USER = 'bloguser'
+        POSTGRES_DB = 'blogcms-prod'
         API_PREFIX = 'api/v1'
         CORS_ORIGINS = 'http://192.168.1.128:3200,http://192.168.1.128:3000'
         MAX_FILE_SIZE = '5242880'
@@ -42,6 +43,7 @@ pipeline {
                             cat > .env.prod.backend << EOF
                                 NODE_ENV=${NODE_ENV}
                                 PORT=${PORT}
+                                POSTGRES_DB=${POSTGRES_DB}
                                 POSTGRES_HOST=${POSTGRES_HOST}
                                 POSTGRES_PORT=${POSTGRES_PORT}
                                 POSTGRES_NAME=${POSTGRES_NAME}

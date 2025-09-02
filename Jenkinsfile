@@ -88,7 +88,7 @@ EOF
                             echo "Environment variables set"
                             
                             # Stop any existing services
-                            docker-compose -f docker-compose.prod.yml stop || echo "No existing services"
+                            docker-compose -f docker-compose.prod.yml down -v || echo "No existing services"
                             
                             # Build and start services
                             docker-compose -f docker-compose.prod.yml up -d --build

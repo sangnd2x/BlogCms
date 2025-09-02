@@ -73,7 +73,8 @@ EOF
             steps {
                 script {
                     withCredentials([
-                        string(credentialsId: 'cms-db-password', variable: 'POSTGRES_PASSWORD')
+                        string(credentialsId: 'cms-db-password', variable: 'POSTGRES_PASSWORD'),
+                        string(credentialsId: 'cms-jwt-secret', variable: 'JWT_SECRET')
                     ]) {
                         sh '''
                             echo "Building and deploying..."
@@ -107,7 +108,7 @@ EOF
                     sleep 30
                     
                     echo "Testing backend health..."
-                    for i in {1..10}; do
+                    for i in $(seq 1 10); do
                         if curl -f -s --max-time 5 "http://localhost:3000/api/v1/health" > /dev/null 2>&1; then
                             echo "✅ Backend health check passed!"
                             curl -s "http://localhost:3000/api/v1/health"
@@ -118,6 +119,8 @@ EOF
                                 echo "❌ Backend health check failed after 10 attempts"
                                 echo "Backend logs:"
                                 docker logs blogcms_backend_prod --tail 30
+                                echo "Checking if backend is running on different endpoint:"
+                                curl -s "http://localhost:3000/health" || echo "No response from /health either"
                                 exit 1
                             fi
                             sleep 10

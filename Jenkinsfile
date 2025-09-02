@@ -100,6 +100,28 @@ EOF
                 }
             }
         }
+
+        stage('Database Migration') {
+            steps {
+                script {
+                    withCredentials([
+                        string(credentialsId: 'cms-db-password', variable: 'POSTGRES_PASSWORD')
+                    ]) {
+                        sh '''
+                            echo "Running database migrations..."
+                            
+                            # Wait for database to be ready
+                            sleep 10
+                            
+                            # Run migrations inside the backend container
+                            docker exec blogcms_backend_prod npm run migration:run
+                            
+                            echo "Migrations completed successfully!"
+                        '''
+                    }
+                }
+            }
+        }
         
         stage('Health Check') {
             steps {

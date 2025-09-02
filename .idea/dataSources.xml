@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:postgresql://localhost:5433/blogcms</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="blogcms_prod@192.168.1.128" uuid="4fd1d225-01d5-4b9f-8031-df2c943abc46">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://192.168.1.128:5433/blogcms_prod</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

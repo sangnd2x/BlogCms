@@ -82,6 +82,7 @@ EOF
                             export POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
                             export POSTGRES_DB="blogcms_prod"
                             export POSTGRES_USER="bloguser"
+                            export JWT_SECRET=${JWT_SECRET}
                             
                             echo "Environment variables set"
                             

@@ -10,6 +10,15 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
+  // Set global API prefix
+  app.setGlobalPrefix(process.env.API_PREFIX || 'api/v1');
+
+  // Enable CORS
+  app.enableCors({
+    origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3200'],
+    credentials: true,
+  });
+
   // Serve uploaded files statically
   const publicPath = join(__dirname, '..', 'public');
 

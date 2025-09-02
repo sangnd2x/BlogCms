@@ -105,27 +105,20 @@ EOF
             steps {
                 sh '''
                     echo "Waiting for backend to start..."
-                    sleep 30
+                    sleep 10
                     
                     echo "Testing backend health..."
-                    for i in $(seq 1 10); do
-                        if curl -f -s --max-time 5 "http://localhost:3000/api/v1/health" > /dev/null 2>&1; then
-                            echo "✅ Backend health check passed!"
-                            curl -s "http://localhost:3000/api/v1/health"
-                            break
-                        else
-                            echo "⏳ Backend not ready, attempt $i/10"
-                            if [ $i -eq 10 ]; then
-                                echo "❌ Backend health check failed after 10 attempts"
-                                echo "Backend logs:"
-                                docker logs blogcms_backend_prod --tail 30
-                                echo "Checking if backend is running on different endpoint:"
-                                curl -s "http://localhost:3000/health" || echo "No response from /health either"
-                                exit 1
-                            fi
-                            sleep 10
-                        fi
-                    done
+                    if curl -f -s --max-time 5 "http://localhost:3000/api/v1/health" > /dev/null 2>&1; then
+                        echo "✅ Backend health check passed!"
+                        curl -s "http://localhost:3000/api/v1/health"
+                    else
+                        echo "❌ Backend health check failed"
+                        echo "Backend logs:"
+                        docker logs blogcms_backend_prod --tail 30
+                        echo "Checking alternative endpoint:"
+                        curl -s "http://localhost:3000/health" || echo "No response from /health either"
+                        exit 1
+                    fi
                 '''
             }
         }

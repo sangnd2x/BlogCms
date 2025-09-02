@@ -80,6 +80,7 @@ pipeline {
                             
                             # Export POSTGRES_PASSWORD so docker-compose can use it
                             export POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
+                            docker compose down -v || echo "No existing services to stop"
                             
                             # Use correct compose file name (check if it's .prod.yml or .production.yml)
                             if [ -f "docker-compose.prod.yml" ]; then

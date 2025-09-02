@@ -29,12 +29,12 @@ services:
       - "3000:3000"
     networks:
       - blog_network
-      
-  # Named volumes for data persistence
-  volumes:
-    postgres_data:
 
-  # network for services communication
-  networks:
-    blog_network:
-      driver: bridge
+# Named volumes for data persistence
+volumes:
+  postgres_data:
+
+# network for services communication
+networks:
+  blog_network:
+    driver: bridge

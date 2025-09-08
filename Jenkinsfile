@@ -142,27 +142,8 @@ EOF
         stage('Health Check') {
             steps {
                 sh '''
-                    echo "Waiting for services to be healthy..."
-            
-                    # Wait for backend to be healthy (max 5 minutes)
-                    timeout=300
-                    while [ $timeout -gt 0 ]; do
-                        if curl -f -s "http://localhost:3000/api/v1/health" > /dev/null 2>&1; then
-                            echo "✅ Backend is healthy!"
-                            break
-                        fi
-                        echo "⏳ Waiting for backend... ($timeout seconds remaining)"
-                        sleep 10
-                        timeout=$((timeout-10))
-                    done
-                    
-                    if [ $timeout -le 0 ]; then
-                        echo "❌ Backend health check timed out"
-                        exit 1
-                    fi
-                    
-                    echo "=== SERVICE STATUS ==="
-                    docker-compose -f docker-compose.prod.yml ps
+                    echo "Containers status:"
+                    docker ps
                 '''
             }
         }

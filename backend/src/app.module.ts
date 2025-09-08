@@ -11,6 +11,8 @@ import { MediaModule } from './media/media.module';
 import { CommentModule } from './comment/comment.module';
 import { HealthController } from './health/health.controller';
 import { HealthModule } from './health/health.module';
+import { MinioService } from './minio/minio.service';
+import { MinioModule } from './minio/minio.module';
 
 @Module({
   imports: [
@@ -38,8 +40,9 @@ import { HealthModule } from './health/health.module';
     MediaModule,
     CommentModule,
     HealthModule,
+    MinioModule,
   ],
   controllers: [AppController, HealthController],
-  providers: [AppService],
+  providers: [AppService, MinioService],
 })
 export class AppModule {}

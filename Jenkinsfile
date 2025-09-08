@@ -33,29 +33,42 @@ pipeline {
                 script {
                     withCredentials([
                         string(credentialsId: 'cms-db-password', variable: 'POSTGRES_PASSWORD'),
-                        string(credentialsId: 'cms-jwt-secret', variable: 'JWT_SECRET')
+                        string(credentialsId: 'cms-jwt-secret', variable: 'JWT_SECRET'),
+                        string(credentialsId: 'minio-access-key', variable: 'MINIO_ACCESS_KEY'),
+                        string(credentialsId: 'minio-secret-key', variable: 'MINIO_SECRET_KEY'),
                     ]) {
                         sh '''
                             echo "Creating production environment files..."
 
                             # Create .env.prod.backend file - FIXED: Proper EOF closing
                             cat > .env.prod.backend << 'EOF'
-NODE_ENV=production
-PORT=3000
-POSTGRES_DB=blogcms_prod
-POSTGRES_HOST=postgres
-POSTGRES_PORT=5432
-POSTGRES_USER=bloguser
-POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-DATABASE_URL=postgresql://bloguser:${POSTGRES_PASSWORD}@postgres:5432/blogcms_prod
-JWT_SECRET=${JWT_SECRET}
-JWT_EXPIRES_IN=24h
-API_PREFIX=api/v1
-CORS_ORIGINS=http://192.168.1.128:3200
-MAX_FILE_SIZE=10485760
-UPLOAD_DIR=./uploads
-LOG_LEVEL=info
-EOF
+                            NODE_ENV=production
+                            PORT=3000
+                            POSTGRES_DB=blogcms_prod
+                            POSTGRES_HOST=postgres
+                            POSTGRES_PORT=5432
+                            POSTGRES_USER=bloguser
+                            POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+                            DATABASE_URL=postgresql://bloguser:${POSTGRES_PASSWORD}@postgres:5432/blogcms_prod
+                            JWT_SECRET=${JWT_SECRET}
+                            JWT_EXPIRES_IN=24h
+                            API_PREFIX=api/v1
+                            CORS_ORIGINS=http://192.168.1.128:3200
+                            MAX_FILE_SIZE=10485760
+                            UPLOAD_DIR=./uploads
+                            LOG_LEVEL=info
+
+                            # MinIO Internal Configuration (for backend API calls)
+                            MINIO_ENDPOINT=minio
+                            MINIO_PORT=9000
+                            MINIO_BUCKET_NAME=blogcms-uploads
+                            MINIO_USE_SSL=false
+                            MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+                            MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+
+                            # MinIO Public URL (for file access)
+                            MINIO_PUBLIC_URL=https://minio.jamesnd.dev
+                            EOF
 
                             mkdir -p logs uploads
 
@@ -73,7 +86,9 @@ EOF
                 script {
                     withCredentials([
                         string(credentialsId: 'cms-db-password', variable: 'POSTGRES_PASSWORD'),
-                        string(credentialsId: 'cms-jwt-secret', variable: 'JWT_SECRET')
+                        string(credentialsId: 'cms-jwt-secret', variable: 'JWT_SECRET'),
+                        string(credentialsId: 'minio-access-key', variable: 'MINIO_ACCESS_KEY'),
+                        string(credentialsId: 'minio-secret-key', variable: 'MINIO_SECRET_KEY'),
                     ]) {
                         sh '''
                             echo "Building and deploying..."
@@ -83,6 +98,8 @@ EOF
                             export POSTGRES_DB="blogcms_prod"
                             export POSTGRES_USER="bloguser"
                             export JWT_SECRET=${JWT_SECRET}
+                            export MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+                            export MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
 
                             echo "Environment variables set"
 
@@ -125,15 +142,27 @@ EOF
         stage('Health Check') {
             steps {
                 sh '''
-                    echo "Waiting for backend to start..."
-                    sleep 60
-
-                    echo "Testing backend health..."
-                    curl -s "http://localhost:3000/api/v1/health" || echo "Health check failed but continuing..."
-
-                    echo "Backend should be accessible at: http://192.168.1.128:3000/api/v1/health"
-                    echo "Containers status:"
-                    docker ps | grep blogcms
+                    echo "Waiting for services to be healthy..."
+            
+                    # Wait for backend to be healthy (max 5 minutes)
+                    timeout=300
+                    while [ $timeout -gt 0 ]; do
+                        if curl -f -s "http://localhost:3000/api/v1/health" > /dev/null 2>&1; then
+                            echo "✅ Backend is healthy!"
+                            break
+                        fi
+                        echo "⏳ Waiting for backend... ($timeout seconds remaining)"
+                        sleep 10
+                        timeout=$((timeout-10))
+                    done
+                    
+                    if [ $timeout -le 0 ]; then
+                        echo "❌ Backend health check timed out"
+                        exit 1
+                    fi
+                    
+                    echo "=== SERVICE STATUS ==="
+                    docker-compose -f docker-compose.prod.yml ps
                 '''
             }
         }

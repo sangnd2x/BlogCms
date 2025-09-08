@@ -13,11 +13,14 @@ import { AdminGuard } from '../auth/guards/admin.guard';
 import { GetUser } from '../common/decorators/user.decorator';
 import { User } from '../user/entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { MinioService } from '../minio/minio.service';
 
 @Controller('media')
 export class MediaController {
-  constructor(private readonly mediaService: MediaService) {}
+  constructor(
+    private readonly mediaService: MediaService,
+    private readonly minioService: MinioService,
+  ) {}
 
   @UseGuards(AdminGuard)
   @Post()
@@ -25,48 +28,45 @@ export class MediaController {
     return this.mediaService.create(createMediaDto, user.id);
   }
 
-  @Post('upload')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: (req, file, cb) => {
-          console.log('File mimetype:', file.mimetype);
-          const uploadPath = file.mimetype.startsWith('video/')
-            ? 'public/videos'
-            : 'public/images';
-          cb(null, uploadPath);
-        },
-        filename: (req, file, cb) => {
-          const fileName =
-            Date.now() + '-' + file.originalname.split(' ').join('-');
-          cb(null, `${fileName}`);
-        },
-      }),
-      fileFilter: (req, file, cb) => {
-        if (file.mimetype.match(/\/(jpg|jpeg|png|gif|mp4|webm|ogg)$/)) {
-          cb(null, true);
-        } else {
-          cb(new Error('Invalid file type'), false);
-        }
-      },
-      limits: { fileSize: 1024 * 1024 * 10 }, // 10MB
-    }),
-  )
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
-    // Check if file was uploaded
+  @Post('upload-image')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
 
-    return {
-      success: true,
-      filename: file.filename,
-      originalName: file.originalname,
-      path: `/public/${file.mimetype.startsWith('video/') ? 'videos' : 'images'}/${file.filename}`,
-      size: file.size,
-      mimetype: file.mimetype,
-      uploadDate: new Date().toISOString(),
-    };
+    // Validate file type
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      throw new BadRequestException(
+        'Only JPEG, PNG, and WebP images are allowed',
+      );
+    }
+
+    // Validate file size (5MB limit)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      throw new BadRequestException('File size must be less than 5MB');
+    }
+
+    try {
+      const fileUrl = await this.minioService.uploadFile(
+        file.buffer,
+        file.originalname,
+        file.mimetype,
+        'blog-images',
+      );
+
+      return {
+        message: 'File uploaded successfully',
+        url: fileUrl,
+        filename: file.originalname,
+        size: file.size,
+      };
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      throw new BadRequestException('File upload failed');
+    }
   }
 
   // @Get()

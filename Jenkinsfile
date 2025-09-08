@@ -42,33 +42,33 @@ pipeline {
 
                             # Create .env.prod.backend file - FIXED: Proper EOF closing
                             cat > .env.prod.backend << 'EOF'
-                            NODE_ENV=production
-                            PORT=3000
-                            POSTGRES_DB=blogcms_prod
-                            POSTGRES_HOST=postgres
-                            POSTGRES_PORT=5432
-                            POSTGRES_USER=bloguser
-                            POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-                            DATABASE_URL=postgresql://bloguser:${POSTGRES_PASSWORD}@postgres:5432/blogcms_prod
-                            JWT_SECRET=${JWT_SECRET}
-                            JWT_EXPIRES_IN=24h
-                            API_PREFIX=api/v1
-                            CORS_ORIGINS=http://192.168.1.128:3200
-                            MAX_FILE_SIZE=10485760
-                            UPLOAD_DIR=./uploads
-                            LOG_LEVEL=info
+NODE_ENV=production
+PORT=3000
+POSTGRES_DB=blogcms_prod
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_USER=bloguser
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+DATABASE_URL=postgresql://bloguser:${POSTGRES_PASSWORD}@postgres:5432/blogcms_prod
+JWT_SECRET=${JWT_SECRET}
+JWT_EXPIRES_IN=24h
+API_PREFIX=api/v1
+CORS_ORIGINS=http://192.168.1.128:3200
+MAX_FILE_SIZE=10485760
+UPLOAD_DIR=./uploads
+LOG_LEVEL=info
 
-                            # MinIO Internal Configuration (for backend API calls)
-                            MINIO_ENDPOINT=minio
-                            MINIO_PORT=9000
-                            MINIO_BUCKET_NAME=blogcms-uploads
-                            MINIO_USE_SSL=false
-                            MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
-                            MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+# MinIO Internal Configuration (for backend API calls)
+MINIO_ENDPOINT=minio
+MINIO_PORT=9000
+MINIO_BUCKET_NAME=blogcms-uploads
+MINIO_USE_SSL=false
+MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
 
-                            # MinIO Public URL (for file access)
-                            MINIO_PUBLIC_URL=https://minio.jamesnd.dev
-                            EOF
+# MinIO Public URL (for file access)
+MINIO_PUBLIC_URL=https://minio.jamesnd.dev
+EOF
 
                             mkdir -p logs uploads
 

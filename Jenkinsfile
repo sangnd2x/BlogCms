@@ -53,7 +53,7 @@ DATABASE_URL=postgresql://bloguser:${POSTGRES_PASSWORD}@postgres:5432/blogcms_pr
 JWT_SECRET=${JWT_SECRET}
 JWT_EXPIRES_IN=24h
 API_PREFIX=api/v1
-CORS_ORIGINS=http://192.168.1.128:3200
+CORS_ORIGINS=http://192.168.100.128:3200
 MAX_FILE_SIZE=10485760
 UPLOAD_DIR=./uploads
 LOG_LEVEL=info
@@ -130,7 +130,7 @@ EOF
                             sleep 10
 
                             # Run migrations inside the backend container
-                            docker exec blogcms_backend_prod npm run migration:run
+                            docker exec blogcms_backend_prod npm run migration:run:prod
 
                             echo "Migrations completed successfully!"
                         '''

@@ -7,8 +7,10 @@ export class MinioService implements OnModuleInit {
   private readonly logger = new Logger(MinioService.name);
   private minioClient: Minio.Client;
   private bucketName: string;
+  private env: string;
 
   constructor(private configService: ConfigService) {
+    this.env = this.configService.get<string>('NODE_ENV') ?? 'development';
     this.bucketName =
       this.configService.get<string>('MINIO_BUCKET_NAME') ?? 'blogcms-uploads';
 
@@ -92,7 +94,7 @@ export class MinioService implements OnModuleInit {
       );
 
       // Return the public URL
-      return `http://${this.configService.get('MINIO_PUBLIC_URL')}:${this.configService.get('MINIO_PORT')}/${this.bucketName}/${objectName}`;
+      return `${this.env === 'development' ? 'http' : 'https'}://${this.configService.get('MINIO_PUBLIC_URL')}:${this.configService.get('MINIO_PORT')}/${this.bucketName}/${objectName}`;
     } catch (error) {
       this.logger.error('Error uploading file:', error);
       throw new Error('File upload failed');

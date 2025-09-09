@@ -94,7 +94,7 @@ export class MinioService implements OnModuleInit {
       );
 
       // Return the public URL
-      return `${this.env === 'development' ? 'http' : 'https'}://${this.configService.get('MINIO_PUBLIC_URL')}:${this.configService.get('MINIO_PORT')}/${this.bucketName}/${objectName}`;
+      return `${this.configService.get('MINIO_PUBLIC_URL')}/${this.bucketName}/${objectName}`;
     } catch (error) {
       this.logger.error('Error uploading file:', error);
       throw new Error('File upload failed');

@@ -67,7 +67,7 @@ MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
 MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
 
 # MinIO Public URL (for file access)
-MINIO_PUBLIC_URL=minio.jamesnd.dev
+MINIO_PUBLIC_URL=https://api.minio.jamesnd.dev
 EOF
 
                             mkdir -p logs uploads

@@ -1,8 +1,18 @@
 # blogcms/cms/dockerfile
-FROM node:20-alpine
+# -------- base deps layer (cached) --------
+FROM node:20-alpine AS deps
 WORKDIR /app
-COPY package*.json ./
+COPY package.json package-lock.json* ./
 RUN npm ci
-COPY . .
-EXPOSE 3200
-CMD [ "npm", "run", "dev" ]
+
+# -------- development runner --------
+FROM node:20-alpine AS dev
+WORKDIR /app
+ENV NODE_ENV=development \
+  WATCHPACK_POLLING=true \
+  CHOKIDAR_USEPOLLING=true \
+  CHOKIDAR_INTERVAL=800 \
+  NEXT_TELEMETRY_DISABLED=1
+COPY --from=deps /app/node_modules ./node_modules
+EXPOSE 3000
+CMD ["npm","run","dev"]

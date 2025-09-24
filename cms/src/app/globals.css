@@ -1,26 +1,272 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Primary Colors - Blue accent */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-950: #172554;
+
+  /* Secondary Colors - Matching your UI */
+  --color-secondary-50: #f9fafb;   /* Light mode text on dark backgrounds */
+  --color-secondary-100: #f3f4f6;  /* Light mode background */
+  --color-secondary-200: #e5e7eb;  /* Light mode borders */
+  --color-secondary-300: #d1d5db;  /* Light mode subtle borders */
+  --color-secondary-400: #9ca3af;  /* Medium gray text */
+  --color-secondary-500: #6b7280;  /* Gray text */
+  --color-secondary-600: #4b5563;  /* Dark gray text */
+  --color-secondary-700: #374151;  /* Very dark text */
+  --color-secondary-800: #1f2937;  /* Dark mode card background */
+  --color-secondary-900: #111827;  /* Dark mode main background */
+  --color-secondary-950: #030712;  /* Darkest background */
+
+  /* Success Colors */
+  --color-success-50: #ecfdf5;
+  --color-success-100: #d1fae5;
+  --color-success-200: #a7f3d0;
+  --color-success-300: #6ee7b7;
+  --color-success-400: #34d399;
+  --color-success-500: #10b981;
+  --color-success-600: #059669;
+  --color-success-700: #047857;
+  --color-success-800: #065f46;
+  --color-success-900: #064e3b;
+  --color-success-950: #022c22;
+
+  /* Warning Colors */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+  --color-warning-950: #451a03;
+
+  /* Error Colors */
+  --color-error-50: #fef2f2;
+  --color-error-100: #fee2e2;
+  --color-error-200: #fecaca;
+  --color-error-300: #fca5a5;
+  --color-error-400: #f87171;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+  --color-error-700: #b91c1c;
+  --color-error-800: #991b1b;
+  --color-error-900: #7f1d1d;
+  --color-error-950: #450a0a;
+
+  /* Custom Box Shadows */
+  --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-dark: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+
+  /* Custom Border Radius */
+  --radius-4xl: 2rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Enable dark mode variant */
+@variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Light mode colors matching your design */
+  --background: #ffffff;           /* Pure white background */
+  --foreground: #111827;           /* Dark text */
+  --card-background: #ffffff;      /* White cards */
+  --border-color: #e5e7eb;         /* Light borders */
+  --muted-background: #f9fafb;     /* Very light gray for subtle backgrounds */
+  --muted-foreground: #6b7280;     /* Gray text */
+}
+
+/* Dark mode colors matching your design */
+:root.dark {
+  --background: #0f172a;           /* Very dark blue-gray background */
+  --foreground: #f1f5f9;           /* Light text */
+  --card-background: #1e293b;      /* Dark cards (slightly lighter than background) */
+  --border-color: #334155;         /* Dark borders */
+  --muted-background: #1e293b;     /* Card background color */
+  --muted-foreground: #94a3b8;     /* Muted gray text */
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not(.light) {
+    --background: #0f172a;
+    --foreground: #f1f5f9;
+    --card-background: #1e293b;
+    --border-color: #334155;
+    --muted-background: #1e293b;
+    --muted-foreground: #94a3b8;
   }
 }
 
 body {
-  background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer components {
+  /* Card component matching your design */
+  .card {
+    background-color: var(--card-background);
+    border-radius: 0.75rem; /* Slightly more rounded like in your design */
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+  }
+
+  .dark .card {
+    background-color: var(--card-background);
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-dark);
+  }
+
+  /* Stats card specifically */
+  .stats-card {
+    background-color: var(--card-background);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .dark .stats-card {
+    background-color: var(--card-background);
+    border-color: var(--border-color);
+    box-shadow: none;
+  }
+
+  /* Button styles matching your design */
+  .btn-primary {
+    background-color: var(--color-primary-500);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-primary-600);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background-color: var(--muted-background);
+    color: var(--foreground);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--color-secondary-200);
+  }
+
+  .dark .btn-secondary:hover {
+    background-color: var(--color-secondary-700);
+  }
+
+  /* Sidebar styles */
+  .sidebar {
+    background-color: var(--background);
+    border-right: 1px solid var(--border-color);
+  }
+
+  .dark .sidebar {
+    background-color: var(--background);
+    border-right-color: var(--border-color);
+  }
+
+  /* Input field styles */
+  .input-field {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    background-color: var(--background);
+    color: var(--foreground);
+    transition: all 0.2s;
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: var(--color-primary-500);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  .dark .input-field {
+    background-color: var(--card-background);
+    border-color: var(--border-color);
+  }
+
+  .dark .input-field:focus {
+    border-color: var(--color-primary-400);
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+  }
+
+  /* Status badges */
+  .badge-published {
+    background-color: var(--color-success-100);
+    color: var(--color-success-700);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .dark .badge-published {
+    background-color: var(--color-success-900);
+    color: var(--color-success-300);
+  }
+
+  .badge-draft {
+    background-color: var(--color-warning-100);
+    color: var(--color-warning-700);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .dark .badge-draft {
+    background-color: var(--color-warning-900);
+    color: var(--color-warning-300);
+  }
+
+  /* Text styles */
+  .text-muted {
+    color: var(--muted-foreground);
+  }
+
+  .text-success {
+    color: var(--color-success-600);
+  }
+
+  .dark .text-success {
+    color: var(--color-success-400);
+  }
+
+  .text-error {
+    color: var(--color-error-600);
+  }
+
+  .dark .text-error {
+    color: var(--color-error-400);
+  }
 }

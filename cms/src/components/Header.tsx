@@ -4,9 +4,9 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { BellIcon } from "lucide-react";
 import Image from "next/image";
-import ThemeSwitchButton from "@/_components/ThemeSwitchButton";
+import ThemeSwitchButton from "@/components/ThemeSwitchButton";
 
-export default function Header() {
+const Header = () => {
   return (
     <div className="flex justify-end bg-secondary-100 dark:bg-secondary-900 text-white border-secondary-200 border-b dark:border-b-secondary-700">
       <div className={cn("flex items-center justify-between mr-4 gap-2 h-16 text-secondary-950")}>
@@ -24,4 +24,6 @@ export default function Header() {
       </div>
     </div>
   );
-}
+};
+
+export default Header;

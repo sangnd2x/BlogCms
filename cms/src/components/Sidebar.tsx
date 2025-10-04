@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { useAppSelector } from "@/lib/redux/hooks";
 
 const SidebarItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -42,6 +43,7 @@ const SidebarItems = [
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const { user } = useAppSelector(state => state.auth);
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
@@ -116,8 +118,8 @@ const Sidebar: React.FC = () => {
           />
           {!collapsed && (
             <div className={cn("flex flex-col")}>
-              <span className="text-secondary-950 dark:text-secondary-100 text-sm">Admin User</span>
-              <span className="text-secondary-400 text-xs">admin@blogcms.com</span>
+              <span className="text-secondary-950 dark:text-secondary-100 text-sm">{user?.name}</span>
+              <span className="text-secondary-400 text-xs">{user?.email}</span>
             </div>
           )}
         </div>

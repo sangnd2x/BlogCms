@@ -1,272 +1,258 @@
 @import "tailwindcss";
-
-@theme {
-  /* Primary Colors - Blue accent */
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
-  --color-primary-950: #172554;
-
-  /* Secondary Colors - Matching your UI */
-  --color-secondary-50: #f9fafb;   /* Light mode text on dark backgrounds */
-  --color-secondary-100: #f3f4f6;  /* Light mode background */
-  --color-secondary-200: #e5e7eb;  /* Light mode borders */
-  --color-secondary-300: #d1d5db;  /* Light mode subtle borders */
-  --color-secondary-400: #9ca3af;  /* Medium gray text */
-  --color-secondary-500: #6b7280;  /* Gray text */
-  --color-secondary-600: #4b5563;  /* Dark gray text */
-  --color-secondary-700: #374151;  /* Very dark text */
-  --color-secondary-800: #1f2937;  /* Dark mode card background */
-  --color-secondary-900: #111827;  /* Dark mode main background */
-  --color-secondary-950: #030712;  /* Darkest background */
-
-  /* Success Colors */
-  --color-success-50: #ecfdf5;
-  --color-success-100: #d1fae5;
-  --color-success-200: #a7f3d0;
-  --color-success-300: #6ee7b7;
-  --color-success-400: #34d399;
-  --color-success-500: #10b981;
-  --color-success-600: #059669;
-  --color-success-700: #047857;
-  --color-success-800: #065f46;
-  --color-success-900: #064e3b;
-  --color-success-950: #022c22;
-
-  /* Warning Colors */
-  --color-warning-50: #fffbeb;
-  --color-warning-100: #fef3c7;
-  --color-warning-200: #fde68a;
-  --color-warning-300: #fcd34d;
-  --color-warning-400: #fbbf24;
-  --color-warning-500: #f59e0b;
-  --color-warning-600: #d97706;
-  --color-warning-700: #b45309;
-  --color-warning-800: #92400e;
-  --color-warning-900: #78350f;
-  --color-warning-950: #451a03;
-
-  /* Error Colors */
-  --color-error-50: #fef2f2;
-  --color-error-100: #fee2e2;
-  --color-error-200: #fecaca;
-  --color-error-300: #fca5a5;
-  --color-error-400: #f87171;
-  --color-error-500: #ef4444;
-  --color-error-600: #dc2626;
-  --color-error-700: #b91c1c;
-  --color-error-800: #991b1b;
-  --color-error-900: #7f1d1d;
-  --color-error-950: #450a0a;
-
-  /* Custom Box Shadows */
-  --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-dark: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-
-  /* Custom Border Radius */
-  --radius-4xl: 2rem;
-}
+@import "tw-animate-css";
 
 /* Enable dark mode variant */
 @variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Light mode colors matching your design */
-  --background: #ffffff;           /* Pure white background */
-  --foreground: #111827;           /* Dark text */
-  --card-background: #ffffff;      /* White cards */
-  --border-color: #e5e7eb;         /* Light borders */
-  --muted-background: #f9fafb;     /* Very light gray for subtle backgrounds */
-  --muted-foreground: #6b7280;     /* Gray text */
+    /* shadcn semantic colors - Light mode (HSL format) */
+    --background: 0 0% 100%;                    /* White background */
+    --foreground: 222.2 84% 4.9%;               /* Very dark blue-gray text */
+
+    --card: 0 0% 100%;                          /* White cards */
+    --card-foreground: 222.2 84% 4.9%;          /* Dark text on cards */
+
+    --popover: 0 0% 100%;                       /* White popovers */
+    --popover-foreground: 222.2 84% 4.9%;       /* Dark text in popovers */
+
+    --primary: 221.2 83.2% 53.3%;               /* Blue primary (matching #3b82f6) */
+    --primary-foreground: 210 40% 98%;          /* Light text on primary */
+
+    --secondary: 210 40% 96.1%;                 /* Light gray secondary */
+    --secondary-foreground: 222.2 47.4% 11.2%;  /* Dark text on secondary */
+
+    --muted: 210 40% 96.1%;                     /* Muted background */
+    --muted-foreground: 215.4 16.3% 46.9%;      /* Muted text */
+
+    --accent: 210 40% 96.1%;                    /* Accent background */
+    --accent-foreground: 222.2 47.4% 11.2%;     /* Text on accent */
+
+    --destructive: 0 84.2% 60.2%;               /* Red for destructive actions */
+    --destructive-foreground: 210 40% 98%;      /* Light text on destructive */
+
+    --border: 214.3 31.8% 91.4%;                /* Light borders */
+    --input: 214.3 31.8% 91.4%;                 /* Input borders */
+    --ring: 221.2 83.2% 53.3%;                  /* Focus ring (primary color) */
+
+    --radius: 0.5rem;                           /* Border radius */
+
+    /* Chart colors */
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
 }
 
-/* Dark mode colors matching your design */
-:root.dark {
-  --background: #0f172a;           /* Very dark blue-gray background */
-  --foreground: #f1f5f9;           /* Light text */
-  --card-background: #1e293b;      /* Dark cards (slightly lighter than background) */
-  --border-color: #334155;         /* Dark borders */
-  --muted-background: #1e293b;     /* Card background color */
-  --muted-foreground: #94a3b8;     /* Muted gray text */
+/* Dark mode */
+.dark {
+    --background: 222.2 84% 4.9%;               /* Very dark blue-gray */
+    --foreground: 210 40% 98%;                  /* Light text */
+
+    --card: 217.2 32.6% 17.5%;                  /* Dark cards */
+    --card-foreground: 210 40% 98%;             /* Light text on cards */
+
+    --popover: 217.2 32.6% 17.5%;               /* Dark popovers */
+    --popover-foreground: 210 40% 98%;          /* Light text in popovers */
+
+    --primary: 217.2 91.2% 59.8%;               /* Lighter blue for dark mode */
+    --primary-foreground: 222.2 47.4% 11.2%;    /* Dark text on primary */
+
+    --secondary: 217.2 32.6% 17.5%;             /* Dark secondary */
+    --secondary-foreground: 210 40% 98%;        /* Light text on secondary */
+
+    --muted: 217.2 32.6% 17.5%;                 /* Muted background */
+    --muted-foreground: 215 20.2% 65.1%;        /* Muted text */
+
+    --accent: 217.2 32.6% 17.5%;                /* Accent background */
+    --accent-foreground: 210 40% 98%;           /* Light text on accent */
+
+    --destructive: 0 62.8% 30.6%;               /* Darker red for dark mode */
+    --destructive-foreground: 210 40% 98%;      /* Light text on destructive */
+
+    --border: 217.2 32.6% 17.5%;                /* Dark borders */
+    --input: 217.2 32.6% 17.5%;                 /* Input borders */
+    --ring: 224.3 76.3% 48%;                    /* Focus ring */
+
+    /* Chart colors for dark mode */
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --background: #0f172a;
-    --foreground: #f1f5f9;
-    --card-background: #1e293b;
-    --border-color: #334155;
-    --muted-background: #1e293b;
-    --muted-foreground: #94a3b8;
-  }
+@theme {
+    /*
+      Map CSS variables to Tailwind color utilities
+      In Tailwind v4, we use hsl() wrapper in @theme
+    */
+    --color-background: hsl(var(--background));
+    --color-foreground: hsl(var(--foreground));
+
+    --color-card: hsl(var(--card));
+    --color-card-foreground: hsl(var(--card-foreground));
+
+    --color-popover: hsl(var(--popover));
+    --color-popover-foreground: hsl(var(--popover-foreground));
+
+    --color-primary: hsl(var(--primary));
+    --color-primary-foreground: hsl(var(--primary-foreground));
+
+    --color-secondary: hsl(var(--secondary));
+    --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+    --color-muted: hsl(var(--muted));
+    --color-muted-foreground: hsl(var(--muted-foreground));
+
+    --color-accent: hsl(var(--accent));
+    --color-accent-foreground: hsl(var(--accent-foreground));
+
+    --color-destructive: hsl(var(--destructive));
+    --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+    --color-border: hsl(var(--border));
+    --color-input: hsl(var(--input));
+    --color-ring: hsl(var(--ring));
+
+    --color-chart-1: hsl(var(--chart-1));
+    --color-chart-2: hsl(var(--chart-2));
+    --color-chart-3: hsl(var(--chart-3));
+    --color-chart-4: hsl(var(--chart-4));
+    --color-chart-5: hsl(var(--chart-5));
+
+    /* Your custom color palette - keeping for flexibility */
+    --color-primary-50: #eff6ff;
+    --color-primary-100: #dbeafe;
+    --color-primary-200: #bfdbfe;
+    --color-primary-300: #93c5fd;
+    --color-primary-400: #60a5fa;
+    --color-primary-500: #3b82f6;
+    --color-primary-600: #2563eb;
+    --color-primary-700: #1d4ed8;
+    --color-primary-800: #1e40af;
+    --color-primary-900: #1e3a8a;
+    --color-primary-950: #172554;
+
+    --color-secondary-50: #f9fafb;
+    --color-secondary-100: #f3f4f6;
+    --color-secondary-200: #e5e7eb;
+    --color-secondary-300: #d1d5db;
+    --color-secondary-400: #9ca3af;
+    --color-secondary-500: #6b7280;
+    --color-secondary-600: #4b5563;
+    --color-secondary-700: #374151;
+    --color-secondary-800: #1f2937;
+    --color-secondary-900: #111827;
+    --color-secondary-950: #030712;
+
+    --color-success-50: #ecfdf5;
+    --color-success-100: #d1fae5;
+    --color-success-200: #a7f3d0;
+    --color-success-300: #6ee7b7;
+    --color-success-400: #34d399;
+    --color-success-500: #10b981;
+    --color-success-600: #059669;
+    --color-success-700: #047857;
+    --color-success-800: #065f46;
+    --color-success-900: #064e3b;
+    --color-success-950: #022c22;
+
+    --color-warning-50: #fffbeb;
+    --color-warning-100: #fef3c7;
+    --color-warning-200: #fde68a;
+    --color-warning-300: #fcd34d;
+    --color-warning-400: #fbbf24;
+    --color-warning-500: #f59e0b;
+    --color-warning-600: #d97706;
+    --color-warning-700: #b45309;
+    --color-warning-800: #92400e;
+    --color-warning-900: #78350f;
+    --color-warning-950: #451a03;
+
+    --color-error-50: #fef2f2;
+    --color-error-100: #fee2e2;
+    --color-error-200: #fecaca;
+    --color-error-300: #fca5a5;
+    --color-error-400: #f87171;
+    --color-error-500: #ef4444;
+    --color-error-600: #dc2626;
+    --color-error-700: #b91c1c;
+    --color-error-800: #991b1b;
+    --color-error-900: #7f1d1d;
+    --color-error-950: #450a0a;
+
+    /* Border radius utilities */
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --radius-2xl: calc(var(--radius) + 8px);
+    --radius-3xl: calc(var(--radius) + 12px);
+    --radius-4xl: 2rem;
+
+    /* Custom shadows */
+    --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-dark: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
 }
 
 @layer components {
-  /* Card component matching your design */
-  .card {
-    background-color: var(--card-background);
-    border-radius: 0.75rem; /* Slightly more rounded like in your design */
-    box-shadow: var(--shadow-soft);
-    border: 1px solid var(--border-color);
-    padding: 1.5rem;
-  }
+    /* Your existing custom component styles */
+    .card {
+        @apply bg-card text-card-foreground rounded-xl border border-border p-6;
+        box-shadow: var(--shadow-soft);
+    }
 
-  .dark .card {
-    background-color: var(--card-background);
-    border-color: var(--border-color);
-    box-shadow: var(--shadow-dark);
-  }
+    .stats-card {
+        @apply bg-card text-card-foreground rounded-xl p-6 border border-border;
+        box-shadow: var(--shadow-soft);
+    }
 
-  /* Stats card specifically */
-  .stats-card {
-    background-color: var(--card-background);
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-soft);
-  }
+    .btn-primary {
+        @apply bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg font-medium transition-all hover:-translate-y-0.5;
+    }
 
-  .dark .stats-card {
-    background-color: var(--card-background);
-    border-color: var(--border-color);
-    box-shadow: none;
-  }
+    .btn-secondary {
+        @apply bg-muted hover:bg-secondary-200 dark:hover:bg-secondary-700 text-foreground px-4 py-2 rounded-lg font-medium transition-all border border-border;
+    }
 
-  /* Button styles matching your design */
-  .btn-primary {
-    background-color: var(--color-primary-500);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    border: none;
-    cursor: pointer;
-  }
+    .sidebar {
+        @apply bg-background border-r border-border;
+    }
 
-  .btn-primary:hover {
-    background-color: var(--color-primary-600);
-    transform: translateY(-1px);
-  }
+    .input-field {
+        @apply w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground transition-all;
+        @apply focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10;
+    }
 
-  .btn-secondary {
-    background-color: var(--muted-background);
-    color: var(--foreground);
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    border: 1px solid var(--border-color);
-    cursor: pointer;
-  }
+    .badge-published {
+        @apply bg-success-100 dark:bg-success-900 text-success-700 dark:text-success-300 px-3 py-1 rounded-full text-xs font-medium;
+    }
 
-  .btn-secondary:hover {
-    background-color: var(--color-secondary-200);
-  }
+    .badge-draft {
+        @apply bg-warning-100 dark:bg-warning-900 text-warning-700 dark:text-warning-300 px-3 py-1 rounded-full text-xs font-medium;
+    }
 
-  .dark .btn-secondary:hover {
-    background-color: var(--color-secondary-700);
-  }
+    .text-muted {
+        @apply text-muted-foreground;
+    }
 
-  /* Sidebar styles */
-  .sidebar {
-    background-color: var(--background);
-    border-right: 1px solid var(--border-color);
-  }
+    .text-success {
+        @apply text-success-600 dark:text-success-400;
+    }
 
-  .dark .sidebar {
-    background-color: var(--background);
-    border-right-color: var(--border-color);
-  }
-
-  /* Input field styles */
-  .input-field {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
-    background-color: var(--background);
-    color: var(--foreground);
-    transition: all 0.2s;
-  }
-
-  .input-field:focus {
-    outline: none;
-    border-color: var(--color-primary-500);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  }
-
-  .dark .input-field {
-    background-color: var(--card-background);
-    border-color: var(--border-color);
-  }
-
-  .dark .input-field:focus {
-    border-color: var(--color-primary-400);
-    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
-  }
-
-  /* Status badges */
-  .badge-published {
-    background-color: var(--color-success-100);
-    color: var(--color-success-700);
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-  }
-
-  .dark .badge-published {
-    background-color: var(--color-success-900);
-    color: var(--color-success-300);
-  }
-
-  .badge-draft {
-    background-color: var(--color-warning-100);
-    color: var(--color-warning-700);
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-  }
-
-  .dark .badge-draft {
-    background-color: var(--color-warning-900);
-    color: var(--color-warning-300);
-  }
-
-  /* Text styles */
-  .text-muted {
-    color: var(--muted-foreground);
-  }
-
-  .text-success {
-    color: var(--color-success-600);
-  }
-
-  .dark .text-success {
-    color: var(--color-success-400);
-  }
-
-  .text-error {
-    color: var(--color-error-600);
-  }
-
-  .dark .text-error {
-    color: var(--color-error-400);
-  }
+    .text-error {
+        @apply text-error-600 dark:text-error-400;
+    }
 }

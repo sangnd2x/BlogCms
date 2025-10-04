@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import React from "react";
-import Sidebar from "@/_components/Sidebar";
-import Header from "@/_components/Header";
 import { ThemeProvider } from "next-themes";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { QueryProvider } from "@/components/QueryProvider";
+import StoreProvider from "@/lib/redux/storeProvider";
 
 export const metadata: Metadata = {
   title: "Blog CMS",
@@ -18,15 +19,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="system">
-          <div className="flex h-screen">
-            <Sidebar />
-            <div className="flex flex-col flex-1 overflow-hidden">
-              <Header />
-              <main className="flex-1 overflow-auto p-6">{children}</main>
-            </div>
-          </div>
-        </ThemeProvider>
+        <StoreProvider>
+          <QueryProvider>
+            <ThemeProvider attribute="class" defaultTheme="system">
+              {children}
+            </ThemeProvider>
+            {process.env.NODE_ENV === "development" && <ReactQueryDevtools initialIsOpen={false} />}
+          </QueryProvider>
+        </StoreProvider>
       </body>
     </html>
   );

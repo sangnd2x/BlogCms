@@ -31,4 +31,8 @@ export class UserService {
   async findOne(id: string) {
     return this.userRepository.findOneBy({ id, is_active: true });
   }
+
+  async countUsers() {
+    return this.userRepository.count();
+  }
 }

@@ -6,6 +6,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Article, ArticleStatus } from './entities/article.entity';
 import { Repository } from 'typeorm';
 
+interface ViewCountResult {
+  total: string;
+}
+
 @Injectable()
 export class ArticleService {
   constructor(
@@ -27,6 +31,19 @@ export class ArticleService {
     });
 
     return this.articleRepository.save(post);
+  }
+
+  async countArticles() {
+    return this.articleRepository.count();
+  }
+
+  async countViewCounts() {
+    const result = await this.articleRepository
+      .createQueryBuilder('article')
+      .select('SUM(article.views_count)', 'total')
+      .getRawOne<ViewCountResult>();
+
+    return parseInt(result?.total || '0', 10);
   }
 
   async findAll(queryParams: ArticleQueryParams) {

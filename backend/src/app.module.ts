@@ -13,6 +13,9 @@ import { HealthController } from './health/health.controller';
 import { HealthModule } from './health/health.module';
 import { MinioService } from './minio/minio.service';
 import { MinioModule } from './minio/minio.module';
+import { DashboardService } from './dashboard/dashboard.service';
+import { DashboardController } from './dashboard/dashboard.controller';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -41,8 +44,9 @@ import { MinioModule } from './minio/minio.module';
     CommentModule,
     HealthModule,
     MinioModule,
+    DashboardModule,
   ],
-  controllers: [AppController, HealthController],
-  providers: [AppService, MinioService],
+  controllers: [AppController, HealthController, DashboardController],
+  providers: [AppService, MinioService, DashboardService],
 })
 export class AppModule {}

@@ -4,7 +4,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { BellIcon } from "lucide-react";
 import Image from "next/image";
-import ThemeSwitchButton from "@/components/ThemeSwitchButton";
+import ThemeSwitchButton from "@/components/layout/ThemeSwitchButton";
 
 const Header = () => {
   return (

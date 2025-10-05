@@ -21,8 +21,8 @@ import { useAppSelector } from "@/lib/redux/hooks";
 const SidebarItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   {
-    name: "Posts",
-    href: "/posts",
+    name: "Articles",
+    href: "/articles",
     icon: FileText,
   },
   { name: "Categories", href: "/categories", icon: FolderOpen },

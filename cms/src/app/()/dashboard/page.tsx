@@ -1,14 +1,13 @@
 "use client";
 
 import { BarChart3, Calendar, FileText, Users } from "lucide-react";
-import SummaryStatCard from "@/components/SummaryStatCard";
-import DashboardLoading from "@/app/(app)/dashboard/loading";
+import SummaryStatCard from "@/components/shared/SummaryStatCard";
+import DashboardLoading from "@/app/()/dashboard/loading";
 import { useDashboard } from "@/hooks/useDashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useArticles } from "@/hooks/useArticles";
-import { ArticleStatus } from "@/types/article.type";
-import ArticleCard from "@/components/ui/ArticleCard";
+import ArticleCard from "@/components/shared/ArticleCard";
 
 const DashboardPage = () => {
   const { data, isLoading, isError, error } = useDashboard();

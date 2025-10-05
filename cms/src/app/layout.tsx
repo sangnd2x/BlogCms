@@ -3,7 +3,7 @@ import "./globals.css";
 import React from "react";
 import { ThemeProvider } from "next-themes";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { QueryProvider } from "@/components/QueryProvider";
+import { QueryProvider } from "@/components/layout/QueryProvider";
 import StoreProvider from "@/lib/redux/storeProvider";
 
 export const metadata: Metadata = {

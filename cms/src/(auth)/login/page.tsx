@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { LoginFormData, loginSchema } from "@/lib/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { apiClient } from "@/lib/axios/apiClient";
 import { useLogin } from "@/hooks/useAuth";
 
 const Login = () => {

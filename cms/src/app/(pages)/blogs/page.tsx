@@ -306,8 +306,8 @@ const ListBlogs = () => {
         <div className="flex-1">
           <div className="mb-4 flex justify-between items-center">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900">Blogs</h1>
-              <p className="text-gray-600">Manage all your blogs.</p>
+              <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-200">Blogs</h1>
+              <p className="text-gray-600 dark:text-gray-300">Manage all your blogs.</p>
             </div>
             <Button size="lg" onClick={handleAddNew}>
               <Plus className="h-8 w-8" />

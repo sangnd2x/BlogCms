@@ -161,10 +161,10 @@ function DataTable<TData, TValue>({
 
   const getPinnedStyles = (isPinned: "left" | "right" | false) => {
     if (isPinned === "left") {
-      return 'sticky left-0 z-20 bg-white after:absolute after:right-0 after:top-0 after:bottom-0 after:w-[2px] after:bg-gray-300 after:content-[""]';
+      return 'sticky left-0 z-20 bg-background after:absolute after:right-0 after:top-0 after:bottom-0 after:w-[1.5px] after:bg-gray-200 dark:after:bg-gray-700 after:content-[""]';
     }
     if (isPinned === "right") {
-      return 'sticky right-0 z-20 bg-white before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[2px] before:bg-gray-300 before:content-[""] shadow-[-8px_0_15px_-3px_rgba(0,0,0,0.15)]';
+      return 'sticky right-0 z-20 bg-background before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[1.5px] before:bg-gray-200 dark:before:bg-gray-700 before:content-[""] shadow-[-8px_0_15px_-3px_rgba(0,0,0,0.15)] dark:shadow-[-8px_0_15px_-3px_rgba(0,0,0,0.9)]';
     }
     return "";
   };

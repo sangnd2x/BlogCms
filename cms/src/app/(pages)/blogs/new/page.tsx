@@ -183,25 +183,14 @@ const NewBlogPage = () => {
             register={register}
             control={control}
             errors={errors}
-            tags={tags}
+            watch={watch}
+            setValue={setValue}
             categoryOptions={categoryOptions}
             categoriesLoading={categoriesLoading}
             username={user?.name}
             userId={user?.id}
-            onAddTag={handleAddTag}
-            onRemoveTag={handleRemoveTag}
           />
         </form>
-
-        {/* Preview Section */}
-        <BlogPreview
-          title={title}
-          category={category}
-          tags={tags}
-          content={content}
-          username={user?.name}
-          categoryOptions={categoryOptions}
-        />
       </div>
     </div>
   );

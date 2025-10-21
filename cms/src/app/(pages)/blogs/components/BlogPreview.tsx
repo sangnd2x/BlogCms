@@ -163,7 +163,7 @@ const BlogPreview: React.FC<Props> = ({
           </div>
         </div>
       ) : (
-        <div className="bg-secondary-300 rounded-t-xl py-1 px-4 items-center">
+        <div className="bg-secondary-300 dark:bg-secondary-900 rounded-t-xl py-1 px-4 items-center">
           <span className="font-semibold text-md">Preview</span>
         </div>
       )}

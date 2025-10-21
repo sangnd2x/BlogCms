@@ -8,13 +8,25 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useBlogs } from "@/hooks/useBlogs";
 import ArticleCard from "@/components/shared/ArticleCard";
+import { useRouter } from "next/navigation";
 
 const DashboardPage = () => {
+  const router = useRouter();
+
   const { data, isLoading, isError, error } = useDashboard();
-  const totalArticles = data?.totalArticles;
+  const { data: blogs } = useBlogs();
+
+  const totalBlogs = data?.totalArticles;
   const totalViewCounts = data?.totalViewCounts;
   const totalUsers = data?.totalUsers;
-  const { data: articles } = useBlogs();
+
+  const handleViewAll = () => {
+    router.push("/blogs");
+  };
+
+  const handleCreate = () => {
+    router.push("/blogs/new");
+  };
 
   if (isError) {
     return (
@@ -41,7 +53,7 @@ const DashboardPage = () => {
       <div className="flex justify-between items-center gap-4 mt-4">
         <SummaryStatCard
           title="Total Articles"
-          value={totalArticles}
+          value={totalBlogs}
           subtitle="+12.5% from last month"
           icon={<FileText />}
         />
@@ -61,14 +73,14 @@ const DashboardPage = () => {
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               Recent Articles
-              <Button variant="ghost" size="sm" className="text-primary">
+              <Button variant="ghost" size="sm" className="text-primary" onClick={handleViewAll}>
                 View all
               </Button>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {articles?.data?.map((article, index) => (
-              <ArticleCard article={article} key={index}/>
+            {blogs?.data?.slice(0, 4).map((article, index) => (
+              <ArticleCard article={article} key={index} />
             ))}
           </CardContent>
         </Card>
@@ -79,9 +91,9 @@ const DashboardPage = () => {
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button className="w-full justify-start cur" variant="outline">
+            <Button className="w-full justify-start cur" variant="outline" onClick={handleCreate}>
               <FileText className="w-4 h-4 mr-2" />
-              Create New Post
+              Write New Blog
             </Button>
             <Button className="w-full justify-start" variant="outline">
               <Users className="w-4 h-4 mr-2" />

@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../config/base.entity';
-import { Article } from '../../article/entities/article.entity';
+import { Blog } from '../../blog/entities/blog.entity';
 import { User } from '../../user/entities/user.entity';
 
 @Entity()
@@ -8,12 +8,12 @@ export class Comment extends BaseEntity {
   @Column()
   content: string;
 
-  @ManyToOne(() => Article, (article) => article.comments)
-  @JoinColumn({ name: 'article_id' })
-  article: Article;
+  @ManyToOne(() => Blog, (blog) => blog.comments)
+  @JoinColumn({ name: 'blog_id' })
+  blog: Blog;
 
   @Column()
-  article_id: string;
+  blog_id: string;
 
   @ManyToOne(() => User, (user) => user.comments)
   @JoinColumn({ name: 'user_id' })

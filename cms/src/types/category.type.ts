@@ -7,3 +7,10 @@ export interface Category extends BaseEntity {
   color: string;
   is_active: boolean;
 }
+
+export interface CategoriesResponse {
+  data: Category[];
+  meta :{
+    total: number;
+  }
+}

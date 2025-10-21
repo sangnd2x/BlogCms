@@ -23,12 +23,19 @@ export class CategoryService {
     return this.categoryRepository.save(category);
   }
 
-  findAll() {
-    return this.categoryRepository.find({
+  async findAll() {
+    const categories = await this.categoryRepository.find({
       where: {
         is_active: true,
       },
     });
+
+    return {
+      data: categories,
+      meta: {
+        total: categories.length,
+      },
+    };
   }
 
   async findOne(id: string) {

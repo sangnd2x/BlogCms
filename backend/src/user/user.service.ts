@@ -35,4 +35,8 @@ export class UserService {
   async countUsers() {
     return this.userRepository.count();
   }
+
+  async findAllUsers() {
+    return this.userRepository.find();
+  }
 }

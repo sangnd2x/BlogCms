@@ -1,6 +1,6 @@
 import { Entity, Column, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../config/base.entity';
-import { Article } from '../../article/entities/article.entity';
+import { Blog } from '../../blog/entities/blog.entity';
 import { Exclude } from 'class-transformer';
 import { Comment } from '../../comment/entities/comment.entity';
 
@@ -32,8 +32,8 @@ export class User extends BaseEntity {
   is_active: boolean;
 
   // Article relationship
-  @OneToMany(() => Article, (article) => article.author)
-  articles: Article[];
+  @OneToMany(() => Blog, (blog) => blog.author)
+  blogs: Blog[];
 
   // Comment relationship
   @OneToMany(() => Comment, (comment) => comment.user)

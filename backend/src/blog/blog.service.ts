@@ -1,22 +1,26 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
+import { CreateBlogDto } from './dto/create-blog.dto';
+import { UpdateBlogDto } from './dto/update-blog.dto';
 import { ArticleQueryParams } from './params/article-query.param';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Article, ArticleStatus } from './entities/article.entity';
-import { Repository } from 'typeorm';
+import { Blog, BlogStatus } from './entities/blog.entity';
+import { Brackets, Repository } from 'typeorm';
+import { ApiResponseDto } from '../common/response/ApiResponseDto';
 
 interface ViewCountResult {
   total: string;
 }
 
 @Injectable()
-export class ArticleService {
+export class BlogService {
   constructor(
-    @InjectRepository(Article)
-    private readonly articleRepository: Repository<Article>,
+    @InjectRepository(Blog)
+    private readonly articleRepository: Repository<Blog>,
   ) {}
-  async create(createArticleDto: CreateArticleDto, userId: string) {
+  async create(
+    createArticleDto: CreateBlogDto,
+    userId: string,
+  ): Promise<ApiResponseDto<Blog>> {
     const slug = createArticleDto.title.replace(/\s+/g, '-');
 
     const post = this.articleRepository.create({
@@ -25,12 +29,16 @@ export class ArticleService {
       author_id: userId,
       created_by: userId,
       published_at:
-        createArticleDto.status === ArticleStatus.PUBLISHED
+        createArticleDto.status === BlogStatus.PUBLISHED
           ? createArticleDto.published_at || new Date()
           : createArticleDto.published_at,
     });
 
-    return this.articleRepository.save(post);
+    await this.articleRepository.save(post);
+    return {
+      data: post,
+      message: 'Blog created successfully',
+    };
   }
 
   async countArticles() {
@@ -46,12 +54,17 @@ export class ArticleService {
     return parseInt(result?.total || '0', 10);
   }
 
-  async findAll(queryParams: ArticleQueryParams) {
+  async findAll(
+    queryParams: ArticleQueryParams,
+  ): Promise<ApiResponseDto<Blog[]>> {
     const {
       search,
+      title,
       status,
       author_id,
-      // tags,
+      category,
+      tags,
+      published_at,
       page = 1,
       limit = 10,
       sort_by = 'created_on',
@@ -66,9 +79,19 @@ export class ArticleService {
 
     if (search) {
       query.andWhere(
+        new Brackets((qb) => {
+          qb.where('article.title ILIKE :search', { search: `%${search}%` })
+            .orWhere('article.content ILIKE :search', { search: `%${search}%` })
+            .orWhere('author.name ILIKE :search', { search: `%${search}%` });
+        }),
+      );
+    }
+
+    if (title) {
+      query.andWhere(
         '(article.title ILIKE :search OR article.content ILIKE :search)',
         {
-          search: `%${search}%`,
+          search: `%${title}%`,
         },
       );
     }
@@ -81,10 +104,27 @@ export class ArticleService {
       query.andWhere('article.author_id = :author_id', { author_id });
     }
 
-    // TODO: Add tag filter
-    // if (tags && tags.length > 0) {
-    //   query.andWhere('article.tags && :tags', { tags });
-    // }
+    if (category) {
+      const categoryIds = category.split(',').map((x) => x.trim());
+      query.andWhere('article.category_id IN (:...categoryIds)', {
+        categoryIds,
+      });
+    }
+
+    if (tags && tags.length > 0) {
+      const tagArr = tags.split(',').map((x) => x.trim());
+      query.andWhere('article.tags IN (:...tagArr)', { tagArr });
+    }
+
+    if (published_at) {
+      const [startDate, endDate] = published_at.split(',');
+      if (startDate && endDate) {
+        query.andWhere('article.published_at BETWEEN :startDate AND :endDate', {
+          startDate: new Date(startDate),
+          endDate: new Date(endDate + 'T23:59:59.999Z'),
+        });
+      }
+    }
 
     // Add sorting
     const validSortFields = [
@@ -98,6 +138,7 @@ export class ArticleService {
       ? sort_by
       : 'created_on';
     const orderDirection = sort_order.toLowerCase() === 'asc' ? 'ASC' : 'DESC';
+
     query.orderBy(`article.${sortField}`, orderDirection);
 
     // Add pagination
@@ -114,10 +155,11 @@ export class ArticleService {
         limit,
         totalPages: Math.ceil(total / limit),
       },
+      message: 'Blogs retrieved successfully',
     };
   }
 
-  async findBySlug(slug: string) {
+  async findBySlug(slug: string): Promise<ApiResponseDto<Blog>> {
     const article = await this.articleRepository.findOne({
       where: {
         title: slug.replace(/-/g, ' '),
@@ -135,10 +177,13 @@ export class ArticleService {
       views_count: article.views_count + 1,
     });
 
-    return { ...article, views_count: article.views_count + 1 };
+    return {
+      data: article,
+      message: 'Blogs retrieved successfully',
+    };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<ApiResponseDto<Blog>> {
     const article = await this.articleRepository.findOne({
       where: {
         id,
@@ -151,28 +196,43 @@ export class ArticleService {
       throw new NotFoundException('Article not found');
     }
 
-    return article;
+    return { data: article, message: 'Blogs retrieved successfully' };
   }
 
-  async update(id: string, updateArticleDto: UpdateArticleDto, userId: string) {
+  async update(id: string, updateBlogDto: UpdateBlogDto, userId: string) {
     const article = await this.findOne(id);
 
     if (!article) {
       throw new NotFoundException('Article not found');
     }
 
+    const dataToUpdate = {
+      ...updateBlogDto,
+      updated_by: userId,
+    };
+
+    console.log('dataToUpdate', dataToUpdate);
+
     // If status is being changed to published, set published_at
     if (
-      updateArticleDto.status === ArticleStatus.PUBLISHED &&
-      article.status !== ArticleStatus.PUBLISHED
+      dataToUpdate.status === BlogStatus.PUBLISHED &&
+      article.data.status !== BlogStatus.PUBLISHED
     ) {
-      updateArticleDto.published_at =
-        updateArticleDto.published_at || new Date().toISOString();
+      dataToUpdate.published_at =
+        dataToUpdate.published_at || new Date().toISOString();
     }
-    updateArticleDto.updated_by = userId;
 
-    await this.articleRepository.update(id, updateArticleDto);
-    return this.findOne(id);
+    // await this.articleRepository.update(id, dataToUpdate);
+
+    const updatedBlog = await this.articleRepository.save({
+      ...article.data,
+      ...dataToUpdate,
+    });
+
+    return {
+      data: updatedBlog,
+      message: 'Blogs updated successfully',
+    };
   }
 
   async remove(id: string, userId: string) {
@@ -182,11 +242,16 @@ export class ArticleService {
       throw new NotFoundException('Article not found');
     }
 
-    return await this.articleRepository.update(id, {
+    await this.articleRepository.update(id, {
       is_active: false,
       is_deleted: true,
       deleted_by: userId,
       deleted_on: new Date(),
     });
+
+    return {
+      data: {},
+      message: 'Blogs deleted successfully',
+    };
   }
 }

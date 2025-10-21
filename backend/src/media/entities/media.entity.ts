@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../config/base.entity';
-import { Article } from '../../article/entities/article.entity';
+import { Blog } from '../../blog/entities/blog.entity';
 
 export enum MediaType {
   IMAGE = 'IMAGE',
@@ -21,10 +21,10 @@ export class Media extends BaseEntity {
   @Column({ type: 'enum', enum: MediaType })
   type: MediaType;
 
-  @ManyToOne(() => Article, (article) => article.medias)
-  @JoinColumn({ name: 'article_id' })
-  article: Article;
+  @ManyToOne(() => Blog, (blog) => blog.medias)
+  @JoinColumn({ name: 'blog_id' })
+  blog: Blog;
 
   @Column({ type: 'uuid' })
-  article_id: string;
+  blog_id: string;
 }

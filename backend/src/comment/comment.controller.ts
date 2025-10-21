@@ -14,7 +14,7 @@ import { Public } from '../common/decorators/public.decorator';
 import { GetUser } from '../common/decorators/user.decorator';
 import { User } from '../user/entities/user.entity';
 
-@Controller('comment')
+@Controller('comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 

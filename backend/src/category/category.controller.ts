@@ -15,7 +15,7 @@ import { AdminGuard } from '../auth/guards/admin.guard';
 import { GetUser } from '../common/decorators/user.decorator';
 import { User } from '../user/entities/user.entity';
 
-@Controller('category')
+@Controller('categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 

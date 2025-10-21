@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../config/base.entity';
-import { Article } from '../../article/entities/article.entity';
+import { Blog } from '../../blog/entities/blog.entity';
 
 @Entity()
 export class Category extends BaseEntity {
@@ -19,6 +19,6 @@ export class Category extends BaseEntity {
   @Column({ default: true })
   is_active: boolean;
 
-  @OneToMany(() => Article, (article) => article.category)
-  articles: Article[];
+  @OneToMany(() => Blog, (blog) => blog.category)
+  blogs: Blog[];
 }

@@ -13,7 +13,7 @@ export class MediaService {
   create(createMediaDto: CreateMediaDto, userId: string) {
     const media = this.mediaRepository.create({
       ...createMediaDto,
-      article_id: userId,
+      blog_id: userId,
     });
 
     return this.mediaRepository.save(media);

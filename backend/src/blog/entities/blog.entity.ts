@@ -5,14 +5,14 @@ import { Category } from '../../category/entities/category.entity';
 import { Media } from '../../media/entities/media.entity';
 import { Comment } from '../../comment/entities/comment.entity';
 
-export enum ArticleStatus {
+export enum BlogStatus {
   DRAFT = 'DRAFT',
   PUBLISHED = 'PUBLISHED',
   ARCHIVED = 'ARCHIVED',
 }
 
 @Entity()
-export class Article extends BaseEntity {
+export class Blog extends BaseEntity {
   @Column()
   title: string;
 
@@ -31,8 +31,8 @@ export class Article extends BaseEntity {
   @Column({ nullable: true })
   featured_image: string;
 
-  @Column({ type: 'enum', enum: ArticleStatus, default: ArticleStatus.DRAFT })
-  status: ArticleStatus;
+  @Column({ type: 'enum', enum: BlogStatus, default: BlogStatus.DRAFT })
+  status: BlogStatus;
 
   @Column({ type: 'timestamptz', nullable: true })
   published_at: Date;
@@ -47,12 +47,12 @@ export class Article extends BaseEntity {
   @Column({ type: 'uuid' })
   author_id: string;
 
-  @ManyToOne(() => User, (user) => user.articles, { nullable: false })
+  @ManyToOne(() => User, (user) => user.blogs, { nullable: false })
   @JoinColumn({ name: 'author_id' })
   author: User;
 
   // Category Relationship
-  @ManyToOne(() => Category, (category) => category.articles, {
+  @ManyToOne(() => Category, (category) => category.blogs, {
     nullable: true,
   })
   @JoinColumn({ name: 'category_id' })
@@ -62,10 +62,10 @@ export class Article extends BaseEntity {
   category_id: string;
 
   // Media Relationship
-  @OneToMany(() => Media, (media) => media.article)
+  @OneToMany(() => Media, (media) => media.blog)
   medias: Media[];
 
   // Comment Relation
-  @OneToMany(() => Comment, (comment) => comment.article)
+  @OneToMany(() => Comment, (comment) => comment.blog)
   comments: Comment[];
 }

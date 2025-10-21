@@ -5,16 +5,12 @@ import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { ArticleModule } from './article/article.module';
+import { BlogModule } from './blog/blog.module';
 import { CategoryModule } from './category/category.module';
 import { MediaModule } from './media/media.module';
 import { CommentModule } from './comment/comment.module';
-import { HealthController } from './health/health.controller';
 import { HealthModule } from './health/health.module';
-import { MinioService } from './minio/minio.service';
 import { MinioModule } from './minio/minio.module';
-import { DashboardService } from './dashboard/dashboard.service';
-import { DashboardController } from './dashboard/dashboard.controller';
 import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
@@ -38,7 +34,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     }),
     AuthModule,
     UserModule,
-    ArticleModule,
+    BlogModule,
     CategoryModule,
     MediaModule,
     CommentModule,
@@ -46,7 +42,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     MinioModule,
     DashboardModule,
   ],
-  controllers: [AppController, HealthController, DashboardController],
-  providers: [AppService, MinioService, DashboardService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

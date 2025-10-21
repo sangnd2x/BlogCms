@@ -5,9 +5,9 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { ArticleStatus } from '../entities/article.entity';
+import { BlogStatus } from '../entities/blog.entity';
 
-export class CreateArticleDto {
+export class CreateBlogDto {
   @IsString()
   title: string;
 
@@ -19,8 +19,8 @@ export class CreateArticleDto {
   featured_image?: string;
 
   @IsOptional()
-  @IsEnum(ArticleStatus)
-  status?: ArticleStatus;
+  @IsEnum(BlogStatus)
+  status?: BlogStatus;
 
   @IsOptional()
   @IsDateString()

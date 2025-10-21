@@ -1,14 +1,18 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ClassSerializerInterceptor } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as express from 'express';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   // Set global API prefix
   app.setGlobalPrefix(process.env.API_PREFIX || 'api/v1');
@@ -44,6 +48,17 @@ async function bootstrap() {
 
         // Set cache headers
         res.setHeader('Cache-Control', 'public, max-age=31536000');
+      },
+    }),
+  );
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // Strip properties that don't have decorators
+      forbidNonWhitelisted: false, // Throw error if non-whitelisted properties exist
+      transform: true, // Transform payloads to DTO instances
+      transformOptions: {
+        enableImplicitConversion: true, // Convert types automatically
       },
     }),
   );

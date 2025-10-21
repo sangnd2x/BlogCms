@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { QueryProvider } from "@/components/layout/QueryProvider";
 import StoreProvider from "@/lib/redux/storeProvider";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Blog CMS",
@@ -23,6 +24,7 @@ export default function RootLayout({
           <QueryProvider>
             <ThemeProvider attribute="class" defaultTheme="system">
               {children}
+              <Toaster position="bottom-right" />
             </ThemeProvider>
             {process.env.NODE_ENV === "development" && <ReactQueryDevtools initialIsOpen={false} />}
           </QueryProvider>

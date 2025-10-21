@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/axios/apiClient";
-import type { LoginFormData } from "@/lib/validations/auth";
+import type { LoginFormData } from "@/lib/zod/authForm";
 import { LoginResponse } from "@/types/auth.type";
 import { login } from "@/routes/auth";
 import { useAppDispatch } from "@/lib/redux/hooks";

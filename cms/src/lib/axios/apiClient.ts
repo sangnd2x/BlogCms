@@ -46,10 +46,10 @@ class ApiClient {
     }
   }
 
-  // PUT request
-  async put<T>(endpoint: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  // PATCH request
+  async patch<T>(endpoint: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     try {
-      const response = await axiosInstance.put(endpoint, data, config);
+      const response = await axiosInstance.patch(endpoint, data, config);
       return response.data;
     } catch (error) {
       throw this.handleError(error as AxiosError);

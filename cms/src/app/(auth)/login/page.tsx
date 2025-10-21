@@ -3,7 +3,7 @@
 import { PenTool } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { LoginFormData, loginSchema } from "@/lib/validations/auth";
+import { LoginFormData, loginSchema } from "@/lib/zod/authForm";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useLogin } from "@/hooks/useAuth";

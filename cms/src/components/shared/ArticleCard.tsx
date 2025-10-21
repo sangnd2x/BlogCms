@@ -1,8 +1,8 @@
-import { Article, ArticleStatus } from "@/types/article.type";
+import { Blog, BlogStatus } from "@/types/blog.type";
 import React from "react";
 
 interface Props {
-  article: Article;
+  article: Blog;
 }
 
 const ArticleCard: React.FC<Props> = ({ article }) => {
@@ -20,7 +20,7 @@ const ArticleCard: React.FC<Props> = ({ article }) => {
       </div>
       <span
         className={`px-2 py-1 rounded-full text-xs font-medium ${
-          article.status === ArticleStatus.PUBLISHED
+          article.status === BlogStatus.PUBLISHED
             ? "bg-success-200 text-success border"
             : "bg-warning-200 text-warning"
         }`}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ChevronLeft,
   FileText,
@@ -21,8 +21,8 @@ import { useAppSelector } from "@/lib/redux/hooks";
 const SidebarItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   {
-    name: "Articles",
-    href: "/articles",
+    name: "Blogs",
+    href: "/blogs",
     icon: FileText,
   },
   { name: "Categories", href: "/categories", icon: FolderOpen },
@@ -117,11 +117,11 @@ const Sidebar: React.FC = () => {
             className="rounded-full object-cover aspect-square"
           />
           {!collapsed && (
-            <div className={cn("flex flex-col")}>
-              <span className="text-secondary-950 dark:text-secondary-100 text-sm">{user?.name}</span>
-              <span className="text-secondary-400 text-xs">{user?.email}</span>
-            </div>
-          )}
+              <div className={cn("flex flex-col")}>
+                <span className="text-secondary-950 dark:text-secondary-100 text-sm">{user?.name}</span>
+                <span className="text-secondary-400 text-xs">{user?.email}</span>
+              </div>
+            )}
         </div>
       </div>
     </div>

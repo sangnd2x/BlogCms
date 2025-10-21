@@ -6,35 +6,35 @@
 
 :root {
     /* shadcn semantic colors - Light mode (HSL format) */
-    --background: 0 0% 100%;                    /* White background */
-    --foreground: 222.2 84% 4.9%;               /* Very dark blue-gray text */
+    --background: 0 0% 100%; /* White background */
+    --foreground: 222.2 84% 4.9%; /* Very dark blue-gray text */
 
-    --card: 0 0% 100%;                          /* White cards */
-    --card-foreground: 222.2 84% 4.9%;          /* Dark text on cards */
+    --card: 0 0% 100%; /* White cards */
+    --card-foreground: 222.2 84% 4.9%; /* Dark text on cards */
 
-    --popover: 0 0% 100%;                       /* White popovers */
-    --popover-foreground: 222.2 84% 4.9%;       /* Dark text in popovers */
+    --popover: 0 0% 100%; /* White popovers */
+    --popover-foreground: 222.2 84% 4.9%; /* Dark text in popovers */
 
-    --primary: 221.2 83.2% 53.3%;               /* Blue primary (matching #3b82f6) */
-    --primary-foreground: 210 40% 98%;          /* Light text on primary */
+    --primary: 217 91% 60%; /* Blue primary (matching #3b82f6) */
+    --primary-foreground: 210 40% 98%; /* Light text on primary */
 
-    --secondary: 210 40% 96.1%;                 /* Light gray secondary */
-    --secondary-foreground: 222.2 47.4% 11.2%;  /* Dark text on secondary */
+    --secondary: 210 40% 96.1%; /* Light gray secondary */
+    --secondary-foreground: 222.2 47.4% 11.2%; /* Dark text on secondary */
 
-    --muted: 210 40% 96.1%;                     /* Muted background */
-    --muted-foreground: 215.4 16.3% 46.9%;      /* Muted text */
+    --muted: 210 40% 96.1%; /* Muted background */
+    --muted-foreground: 215.4 16.3% 46.9%; /* Muted text */
 
-    --accent: 210 40% 96.1%;                    /* Accent background */
-    --accent-foreground: 222.2 47.4% 11.2%;     /* Text on accent */
+    --accent: 210 40% 96.1%; /* Accent background */
+    --accent-foreground: 222.2 47.4% 11.2%; /* Text on accent */
 
-    --destructive: 0 84.2% 60.2%;               /* Red for destructive actions */
-    --destructive-foreground: 210 40% 98%;      /* Light text on destructive */
+    --destructive: 0 84% 60%;; /* Red for destructive actions */
+    --destructive-foreground: 0 0% 100%; /* Light text on destructive */
 
-    --border: 214.3 31.8% 91.4%;                /* Light borders */
-    --input: 214.3 31.8% 91.4%;                 /* Input borders */
-    --ring: 221.2 83.2% 53.3%;                  /* Focus ring (primary color) */
+    --border: 214.3 31.8% 91.4%; /* Light borders */
+    --input: 214.3 31.8% 91.4%; /* Input borders */
+    --ring: 221.2 83.2% 53.3%; /* Focus ring (primary color) */
 
-    --radius: 0.5rem;                           /* Border radius */
+    --radius: 0.5rem; /* Border radius */
 
     /* Chart colors */
     --chart-1: 12 76% 61%;
@@ -46,33 +46,33 @@
 
 /* Dark mode */
 .dark {
-    --background: 222.2 84% 4.9%;               /* Very dark blue-gray */
-    --foreground: 210 40% 98%;                  /* Light text */
+    --background: 222.2 84% 4.9%; /* Very dark blue-gray */
+    --foreground: 210 40% 98%; /* Light text */
 
-    --card: 217.2 32.6% 17.5%;                  /* Dark cards */
-    --card-foreground: 210 40% 98%;             /* Light text on cards */
+    --card: 217.2 32.6% 17.5%; /* Dark cards */
+    --card-foreground: 210 40% 98%; /* Light text on cards */
 
-    --popover: 217.2 32.6% 17.5%;               /* Dark popovers */
-    --popover-foreground: 210 40% 98%;          /* Light text in popovers */
+    --popover: 217.2 32.6% 17.5%; /* Dark popovers */
+    --popover-foreground: 210 40% 98%; /* Light text in popovers */
 
-    --primary: 217.2 91.2% 59.8%;               /* Lighter blue for dark mode */
-    --primary-foreground: 222.2 47.4% 11.2%;    /* Dark text on primary */
+    --primary: 217.2 91.2% 59.8%; /* Lighter blue for dark mode */
+    --primary-foreground: 222.2 47.4% 11.2%; /* Dark text on primary */
 
-    --secondary: 217.2 32.6% 17.5%;             /* Dark secondary */
-    --secondary-foreground: 210 40% 98%;        /* Light text on secondary */
+    --secondary: 217.2 32.6% 17.5%; /* Dark secondary */
+    --secondary-foreground: 210 40% 98%; /* Light text on secondary */
 
-    --muted: 217.2 32.6% 17.5%;                 /* Muted background */
-    --muted-foreground: 215 20.2% 65.1%;        /* Muted text */
+    --muted: 217.2 32.6% 17.5%; /* Muted background */
+    --muted-foreground: 215 20.2% 65.1%; /* Muted text */
 
-    --accent: 217.2 32.6% 17.5%;                /* Accent background */
-    --accent-foreground: 210 40% 98%;           /* Light text on accent */
+    --accent: 217.2 32.6% 17.5%; /* Accent background */
+    --accent-foreground: 210 40% 98%; /* Light text on accent */
 
-    --destructive: 0 62.8% 30.6%;               /* Darker red for dark mode */
-    --destructive-foreground: 210 40% 98%;      /* Light text on destructive */
+    --destructive: 0 62.8% 30.6%; /* Darker red for dark mode */
+    --destructive-foreground: 210 40% 98%; /* Light text on destructive */
 
-    --border: 217.2 32.6% 17.5%;                /* Dark borders */
-    --input: 217.2 32.6% 17.5%;                 /* Input borders */
-    --ring: 224.3 76.3% 48%;                    /* Focus ring */
+    --border: 217.2 32.6% 17.5%; /* Dark borders */
+    --input: 217.2 32.6% 17.5%; /* Input borders */
+    --ring: 224.3 76.3% 48%; /* Focus ring */
 
     /* Chart colors for dark mode */
     --chart-1: 220 70% 50%;
@@ -201,9 +201,223 @@
     * {
         @apply border-border outline-ring/50;
     }
+
     body {
         @apply bg-background text-foreground;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .ProseMirror h1 {
+        font-size: 2.25rem; /* 36px */
+        font-weight: 700;
+        margin-bottom: 1rem;
+        margin-top: 1.5rem;
+        line-height: 1.2;
+    }
+
+    .ProseMirror h2 {
+        font-size: 1.875rem; /* 30px */
+        font-weight: 700;
+        margin-bottom: 0.875rem;
+        margin-top: 1.25rem;
+        line-height: 1.3;
+    }
+
+    .ProseMirror h3 {
+        font-size: 1.5rem; /* 24px */
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        margin-top: 1rem;
+        line-height: 1.4;
+    }
+
+    .ProseMirror h4 {
+        font-size: 1.25rem; /* 20px */
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        margin-top: 0.75rem;
+        line-height: 1.5;
+    }
+
+    /* Paragraph styles */
+    .ProseMirror p {
+        @apply mb-3;
+    }
+
+    /* Link styles */
+    .ProseMirror a {
+        color: hsl(var(--primary));
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .ProseMirror a:hover {
+        opacity: 0.8;
+    }
+
+    /* Image styles */
+    .ProseMirror img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        margin: 1rem 0;
+        display: block;
+    }
+
+    .ProseMirror img.ProseMirror-selectednode {
+        outline: 3px solid hsl(var(--primary));
+    }
+
+    .ProseMirror ul,
+    .ProseMirror ol {
+        padding-left: 2rem !important;
+        margin: 1rem 0 !important;
+    }
+
+    .ProseMirror ul {
+        list-style-type: disc !important;
+    }
+
+    .ProseMirror ol {
+        list-style-type: decimal !important;
+    }
+
+    .ProseMirror ul ul {
+        list-style-type: circle !important;
+    }
+
+    .ProseMirror ol ol {
+        list-style-type: lower-alpha !important;
+    }
+
+    .ProseMirror li {
+        display: list-item !important;
+        margin: 0.25rem 0;
+    }
+
+    .ProseMirror li > p {
+        margin: 0 !important;
+        display: inline !important;
+    }
+
+    /* Remove unnecessary paragraph spacing in lists */
+    .ProseMirror li p {
+        display: inline;
+    }
+
+    /* ============================================
+    PREVIEW CONTENT STYLES
+    Mirror the ProseMirror styles for consistency
+    ============================================ */
+
+    .preview-content h1 {
+        font-size: 2.25rem; /* 36px */
+        font-weight: 700;
+        margin-bottom: 1rem;
+        margin-top: 1.5rem;
+        line-height: 1.2;
+    }
+
+    .preview-content h2 {
+        font-size: 1.875rem; /* 30px */
+        font-weight: 700;
+        margin-bottom: 0.875rem;
+        margin-top: 1.25rem;
+        line-height: 1.3;
+    }
+
+    .preview-content h3 {
+        font-size: 1.5rem; /* 24px */
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        margin-top: 1rem;
+        line-height: 1.4;
+    }
+
+    .preview-content h4 {
+        font-size: 1.25rem; /* 20px */
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        margin-top: 0.75rem;
+        line-height: 1.5;
+    }
+
+    /* Paragraph styles */
+    .preview-content p {
+        @apply mb-3;
+    }
+
+    /* Link styles */
+    .preview-content a {
+        color: hsl(var(--primary));
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .preview-content a:hover {
+        opacity: 0.8;
+    }
+
+    /* Image styles */
+    .preview-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        margin: 1rem 0;
+        display: block;
+        object-fit: contain;
+    }
+
+    /* List styles */
+    .preview-content ul,
+    .preview-content ol {
+        padding-left: 2rem !important;
+        margin: 1rem 0 !important;
+    }
+
+    .preview-content ul {
+        list-style-type: disc !important;
+    }
+
+    .preview-content ol {
+        list-style-type: decimal !important;
+    }
+
+    .preview-content ul ul {
+        list-style-type: circle !important;
+    }
+
+    .preview-content ol ol {
+        list-style-type: lower-alpha !important;
+    }
+
+    .preview-content li {
+        display: list-item !important;
+        margin: 0.25rem 0;
+    }
+
+    .preview-content li > p {
+        margin: 0 !important;
+        display: inline !important;
+    }
+
+    .preview-content li p {
+        display: inline;
+    }
+
+    /* Text formatting */
+    .preview-content strong {
+        font-weight: 700;
+    }
+
+    .preview-content em {
+        font-style: italic;
+    }
+
+    .preview-content mark {
+        background-color: hsl(var(--primary) / 0.2);
+        padding: 0.125rem 0.25rem;
+        border-radius: 0.25rem;
     }
 }
 

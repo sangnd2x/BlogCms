@@ -2,11 +2,11 @@
 
 import { BarChart3, Calendar, FileText, Users } from "lucide-react";
 import SummaryStatCard from "@/components/shared/SummaryStatCard";
-import DashboardLoading from "@/app/()/dashboard/loading";
+import DashboardLoading from "@/app/(pages)/dashboard/loading";
 import { useDashboard } from "@/hooks/useDashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useArticles } from "@/hooks/useArticles";
+import { useBlogs } from "@/hooks/useBlogs";
 import ArticleCard from "@/components/shared/ArticleCard";
 
 const DashboardPage = () => {
@@ -14,7 +14,7 @@ const DashboardPage = () => {
   const totalArticles = data?.totalArticles;
   const totalViewCounts = data?.totalViewCounts;
   const totalUsers = data?.totalUsers;
-  const { data: articles } = useArticles();
+  const { data: articles } = useBlogs();
 
   if (isError) {
     return (
@@ -67,7 +67,7 @@ const DashboardPage = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {articles?.data.map((article, index) => (
+            {articles?.data?.map((article, index) => (
               <ArticleCard article={article} key={index}/>
             ))}
           </CardContent>

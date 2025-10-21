@@ -1,16 +1,20 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
+import { store } from "@/lib/redux/store";
+import { clearCredentials } from "@/lib/redux/features/auth/authSlice";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   timeout: 10000,
-})
+});
 
 axiosInstance.interceptors.request.use(
   config => {
-    const token = localStorage.getItem('access_token');
+    const state = store.getState();
+    const token = state.auth.token;
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -19,15 +23,13 @@ axiosInstance.interceptors.request.use(
   error => {
     return Promise.reject(error);
   }
-)
+);
 
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      console.error('Unauthorized - redirecting to login');
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("user");
+      store.dispatch(clearCredentials());
       window.location.href = "/login";
     }
     return Promise.reject(error);

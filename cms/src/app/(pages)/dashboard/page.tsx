@@ -7,8 +7,8 @@ import { useDashboard } from "@/hooks/useDashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useBlogs } from "@/hooks/useBlogs";
-import ArticleCard from "@/components/shared/ArticleCard";
 import { useRouter } from "next/navigation";
+import BlogCard from "../../../components/shared/BlogCard";
 
 const DashboardPage = () => {
   const router = useRouter();
@@ -16,9 +16,9 @@ const DashboardPage = () => {
   const { data, isLoading, isError, error } = useDashboard();
   const { data: blogs } = useBlogs();
 
-  const totalBlogs = data?.totalArticles;
-  const totalViewCounts = data?.totalViewCounts;
-  const totalUsers = data?.totalUsers;
+  const totalBlogs = data?.data?.totalBlogs;
+  const totalViewCounts = data?.data?.totalViewCounts;
+  const totalUsers = data?.data?.totalUsers;
 
   const handleViewAll = () => {
     router.push("/blogs");
@@ -79,8 +79,8 @@ const DashboardPage = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {blogs?.data?.slice(0, 4).map((article, index) => (
-              <ArticleCard article={article} key={index} />
+            {blogs?.data?.slice(0, 4).map((blog, index) => (
+              <BlogCard blog={blog} key={index} />
             ))}
           </CardContent>
         </Card>

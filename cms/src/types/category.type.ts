@@ -5,12 +5,12 @@ export interface Category extends BaseEntity {
   slug: string;
   description: string | null;
   color: string;
-  is_active: boolean;
+  isActive: boolean;
 }
 
 export interface CategoriesResponse {
   data: Category[];
-  meta :{
+  meta: {
     total: number;
-  }
+  };
 }

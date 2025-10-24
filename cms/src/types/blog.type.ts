@@ -8,16 +8,16 @@ export interface Blog extends BaseEntity {
   content: string;
   excerpt: string | null;
   tags: string[];
-  featured_image: string | null;
+  featuredImage: string | null;
   status: BlogStatus;
-  published_at: string | null;
-  views_count: number;
-  is_active: boolean;
-  author_id: string;
-  category_id: string;
+  publishedAt: string | null;
+  viewsCount: number;
+  isActive: boolean;
+  authorId: string;
+  categoryId: string;
 
   // relations
-  author: User;
+  user: User;
   category: Category;
 }
 
@@ -35,13 +35,12 @@ export interface BlogsParams {
   search?: string;
   title?: string;
   status?: string;
-  author_id?: string;
+  authorId?: string;
   author?: string;
   category?: string;
   tags?: string;
-  published_at?: string;
+  publishedAt?: string;
   // sorting
-  sort_by?: string;
-  sort_order?: "ASC" | "DESC";
-  search_columns?: string;
+  sortBy?: string;
+  sortOrder?: "ASC" | "DESC";
 }

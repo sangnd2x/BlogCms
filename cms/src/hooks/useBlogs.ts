@@ -6,15 +6,15 @@ export function useBlogs(params: BlogsParams = {}) {
   const queryParams = {
     page: params.page ?? 1,
     limit: params.limit ?? 10,
-    sort_by: params.sort_by ?? "created_on",
-    sort_order: params.sort_order ?? "DESC",
+    sortBy: params.sortBy ?? "createdOn",
+    sortOrder: params.sortOrder ?? "DESC",
     title: params.title,
     status: params.status,
-    author_id: params.author_id,
+    authorId: params.authorId,
     author: params.author,
     category: params.category,
     tags: params.tags,
-    published_at: params.published_at,
+    publishedAt: params.publishedAt,
     search: params.search,
   };
 

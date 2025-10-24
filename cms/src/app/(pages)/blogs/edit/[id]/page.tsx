@@ -72,11 +72,11 @@ const EditBlogPage = () => {
 
   useEffect(() => {
     if (blog && categoryOptions.length > 0) {
-      console.log("Category from API:", blog.category_id);
+      console.log("Category from API:", blog.categoryId);
       console.log("Available options:", categoryOptions);
 
       // Verify the category exists in options
-      const categoryExists = categoryOptions.some(opt => opt.value === blog.category_id);
+      const categoryExists = categoryOptions.some(opt => opt.value === blog.categoryId);
 
       if (!categoryExists) {
         console.error("Category not found in options!");
@@ -86,9 +86,9 @@ const EditBlogPage = () => {
       reset({
         title: blog.title,
         content: blog.content,
-        category_id: blog.category_id,
+        categoryId: blog.categoryId,
         tags: blog.tags || [],
-        author_id: blog.author_id,
+        authorId: blog.authorId,
         images: [],
       });
     }
@@ -104,7 +104,7 @@ const EditBlogPage = () => {
     };
 
     if (statusValue === BlogStatus.PUBLISHED) {
-      payload.published_at = new Date().toISOString();
+      payload.publishedAt = new Date().toISOString();
     }
 
     await updateBlogMutation.mutateAsync(payload);

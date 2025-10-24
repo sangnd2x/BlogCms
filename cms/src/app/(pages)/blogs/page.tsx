@@ -86,15 +86,15 @@ const ListBlogs = () => {
 
   const deleteBlogMutation = useMutation({
     mutationFn: (id: string) => deleteBlog(id),
-    onSuccess: async (data) => {
+    onSuccess: async data => {
       await queryClient.invalidateQueries({ queryKey: ["allBlogs"] });
       toast.success(data.message);
     },
     onError: err => {
       const errorMessage = err?.message || "Blog delete error";
       toast.error(errorMessage);
-    }
-  })
+    },
+  });
 
   const handleView = (blog: Blog) => {
     console.log("View blog:", blog);
@@ -177,7 +177,7 @@ const ListBlogs = () => {
       },
 
       {
-        accessorKey: "published_at",
+        accessorKey: "publishedAt",
         header: () => <span>Published At</span>,
         cell: info => formatDateTimeLocale(info.getValue()),
         enableColumnFilter: true,
@@ -234,7 +234,7 @@ const ListBlogs = () => {
         accessorKey: "author",
         header: () => <span>Author</span>,
         cell: info => info.getValue(),
-        accessorFn: row => row.author.name,
+        accessorFn: row => row.user.name,
         enableColumnFilter: false,
         enableSorting: false,
         enableResizing: true,
@@ -249,7 +249,7 @@ const ListBlogs = () => {
         },
       },
       {
-        accessorKey: "views_count",
+        accessorKey: "viewsCount",
         header: () => <span>View Counts</span>,
         cell: info => info.getValue(),
         enableColumnFilter: false,
@@ -297,7 +297,7 @@ const ListBlogs = () => {
     [categoryOptions]
   );
 
-  const centerTextColumns = ["author", "category", "tags", "published_at", "created_on", "views_count", "status"];
+  const centerTextColumns = ["author", "category", "tags", "publishedAt", "created_on", "viewsCount", "status"];
 
   return (
     <div className="p-4 space-y-4">

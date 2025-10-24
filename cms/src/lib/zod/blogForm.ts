@@ -5,13 +5,12 @@ export const blogFormSchema = z.object({
   title: z.string().min(1, "Title cannot be empty").max(100, "Title must be less than 100 characters").trim(),
   slug: z.string().optional(),
   content: z.string().min(1, "Content cannot be empty"),
-  category_id: z.uuid("Invalid category").optional(),
+  categoryId: z.uuid("Invalid category").optional(),
   tags: z.array(z.string()).optional(),
-  published_at: z.string().optional(),
+  publishedAt: z.string().optional(),
   status: z.enum(BlogStatus).optional(),
 
-
-  author_id: z.uuid(),
+  authorId: z.uuid(),
 });
 
 export type ImageData = {

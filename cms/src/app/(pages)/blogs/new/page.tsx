@@ -56,9 +56,9 @@ const NewBlogPage = () => {
     defaultValues: {
       title: "",
       content: "",
-      category_id: "",
+      categoryId: "",
       tags: [],
-      author_id: user?.id || "",
+      authorId: user?.id || "",
     },
   });
 
@@ -72,7 +72,7 @@ const NewBlogPage = () => {
     };
 
     if (statusValue === BlogStatus.PUBLISHED) {
-      payload.published_at = new Date().toISOString();
+      payload.publishedAt = new Date().toISOString();
     }
 
     await createBlogMutation.mutateAsync(payload);
@@ -122,7 +122,7 @@ const NewBlogPage = () => {
 
   const title = watch("title");
   const content = watch("content");
-  const category = watch("category_id");
+  const category = watch("categoryId");
   const tags = watch("tags") || [];
 
   return (

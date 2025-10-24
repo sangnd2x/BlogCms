@@ -74,7 +74,7 @@ const BlogForm: React.FC<Props> = ({
       <div className="flex flex-col gap-2">
         <CustomLabel label="category" isRequired={false} />
         <Controller
-          name="category_id"
+          name="categoryId"
           control={control}
           render={({ field }) => (
             <Select key={field.value} onValueChange={field.onChange} value={field.value} disabled={categoriesLoading}>
@@ -94,7 +94,7 @@ const BlogForm: React.FC<Props> = ({
             </Select>
           )}
         />
-        {errors.category_id && <p className="text-sm text-red-500">{errors.category_id.message}</p>}
+        {errors.categoryId && <p className="text-sm text-red-500">{errors.categoryId.message}</p>}
       </div>
 
       {/* Tags */}
@@ -141,7 +141,7 @@ const BlogForm: React.FC<Props> = ({
         <div className="flex flex-col gap-2">
           <CustomLabel label="author" isRequired={false} />
           <h2 className="text-secondary-500">{username}</h2>
-          <Input value={userId} type="hidden" {...register("author_id")} />
+          <Input value={userId} type="hidden" {...register("authorId")} />
         </div>
       ) : null}
 

@@ -39,8 +39,8 @@ const BlogPreview: React.FC<Props> = ({
   const displayAuthor = data?.author?.name || username;
   const displayCategory = data?.category?.name || getCategoryLabel();
   const displayStatus = data?.status || null;
-  const displayPublishedAt = data?.published_at;
-  const displayViewsCount = data?.views_count || 0;
+  const displayPublishedAt = data?.publishedAt;
+  const displayViewsCount = data?.viewsCount || 0;
 
   const sanitizedHTML = (content?: string): string => {
     if (!content) {
@@ -70,7 +70,7 @@ const BlogPreview: React.FC<Props> = ({
         "pre",
         "mark",
         "span",
-        "s"
+        "s",
       ],
       ALLOWED_ATTR: ["href", "src", "alt", "class", "target", "rel", "style"],
     });
@@ -104,7 +104,7 @@ const BlogPreview: React.FC<Props> = ({
 
   // Blog stats
   const stats = {
-    totalViews: data?.views_count,
+    totalViews: data?.viewsCount,
     avgReadTime: calculateReadTime(data?.content),
   };
 

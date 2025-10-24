@@ -1,5 +1,5 @@
 export interface DashboardResponse {
-  totalArticles: number;
+  totalBlogs: number;
   totalViewCounts: number;
   totalUsers: number;
 }

@@ -11,9 +11,9 @@ import { MediaService } from './media.service';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { AdminGuard } from '../auth/guards/admin.guard';
 import { GetUser } from '../common/decorators/user.decorator';
-import { User } from '../user/entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MinioService } from '../minio/minio.service';
+import { User } from '@prisma/client';
 
 @Controller('media')
 export class MediaController {

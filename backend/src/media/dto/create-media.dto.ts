@@ -1,13 +1,16 @@
-import { IsEnum, IsString, IsUUID } from 'class-validator';
-import { MediaType } from '../entities/media.entity';
+import { IsEnum, IsString } from 'class-validator';
+import { MediaTypeEnum } from '@prisma/client';
 
 export class CreateMediaDto {
   @IsString()
   url: string;
 
-  @IsEnum(MediaType)
-  media_type: MediaType;
+  @IsString()
+  filename: string;
 
-  @IsUUID()
-  article_id: number;
+  @IsString()
+  originalName: string;
+
+  @IsEnum(MediaTypeEnum)
+  type: MediaTypeEnum;
 }

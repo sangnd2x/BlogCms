@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Blog {
+  id            String         @id @db.Uuid @default(uuid())
+  title         String         @db.VarChar
+  slug          String         @db.VarChar
+  content       String
+  featuredImage String?        @db.VarChar
+  status        BlogStatusEnum @default(DRAFT)
+  publishedAt   DateTime?      @db.Timestamptz(6)
+  viewCounts    Int            @default(0)
+  authorId      String         @db.Uuid
+  excerpt       String?
+  tags          String[]       @default([])
+  categoryId    String?        @db.Uuid
+  comment       Comment[]
+  media         Media[]
+
+  isActive      Boolean        @default(true)
+  createdOn     DateTime       @default(now()) @db.Timestamptz(6)
+  createdBy     String?        @db.Uuid
+  updatedOn     DateTime       @default(now()) @db.Timestamptz(6)
+  updatedBy     String?        @db.Uuid
+  isDeleted     Boolean        @default(false)
+  deletedOn     DateTime?      @db.Timestamptz(6)
+  deletedBy     String?        @db.Uuid
+
+  user          User           @relation(fields: [authorId], references: [id])
+  category      Category?      @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id          String    @id @db.Uuid @default(uuid())
+  name        String    @unique @db.VarChar
+  slug        String    @unique @db.VarChar
+  description String?   @db.VarChar
+  color       String?   @db.VarChar
+  blog        Blog[]
+
+  isActive    Boolean   @default(true)
+  createdOn   DateTime  @default(now()) @db.Timestamptz(6)
+  createdBy   String?   @db.Uuid
+  updatedOn   DateTime  @default(now()) @db.Timestamptz(6)
+  updatedBy   String?   @db.Uuid
+  isDeleted   Boolean   @default(false)
+  deletedOn   DateTime? @db.Timestamptz(6)
+  deletedBy   String?   @db.Uuid
+}
+
+model Comment {
+  id        String    @id @db.Uuid @default(uuid())
+  content   String    @db.VarChar
+  blogId    String    @db.Uuid
+  userId    String    @db.Uuid
+
+  isActive  Boolean   @default(true)
+  createdOn DateTime  @default(now()) @db.Timestamptz(6)
+  createdBy String?   @db.Uuid
+  updatedOn DateTime  @default(now()) @db.Timestamptz(6)
+  updatedBy String?   @db.Uuid
+  isDeleted Boolean   @default(false)
+  deletedOn DateTime? @db.Timestamptz(6)
+  deletedBy String?   @db.Uuid
+
+  blog      Blog      @relation(fields: [blogId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+}
+
+model Media {
+  id           String        @id @db.Uuid @default(uuid())
+  url          String        @db.VarChar
+  filename     String        @db.VarChar
+  originalName String        @db.VarChar
+  type         MediaTypeEnum
+  blogId       String        @db.Uuid
+
+  isActive     Boolean       @default(true)
+  createdOn    DateTime      @default(now()) @db.Timestamptz(6)
+  createdBy    String?       @db.Uuid
+  updatedOn    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedBy    String?       @db.Uuid
+  isDeleted    Boolean       @default(false)
+  deletedOn    DateTime?     @db.Timestamptz(6)
+  deletedBy    String?       @db.Uuid
+  
+  blog         Blog          @relation(fields: [blogId], references: [id])
+}
+
+model User {
+  id                  String       @id @db.Uuid @default(uuid())
+  name                String       @unique @db.VarChar
+  email               String       @unique @db.VarChar
+  passwordHash        String       @db.VarChar
+  userRole            UserRoleEnum
+  lastChangedPassword DateTime?    @db.Timestamptz(6)
+
+  isActive            Boolean      @default(true)
+  createdOn           DateTime     @default(now()) @db.Timestamptz(6)
+  createdBy           String?      @db.Uuid
+  updatedOn           DateTime     @default(now()) @db.Timestamptz(6)
+  updatedBy           String?      @db.Uuid
+  isDeleted           Boolean      @default(false)
+  deletedOn           DateTime?    @db.Timestamptz(6)
+  deletedBy           String?      @db.Uuid
+
+  blog                Blog[]
+  comment             Comment[]
+}
+
+enum BlogStatusEnum {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  SCHEDULED
+}
+
+enum MediaTypeEnum {
+  IMAGE
+  VIDEO
+}
+
+enum UserRoleEnum {
+  ADMIN
+  VIEWER
+}

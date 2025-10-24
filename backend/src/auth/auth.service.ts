@@ -2,8 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import CreateUserDto from '../user/dto/create-user.dto';
-import { User } from '../user/entities/user.entity';
+import { CreateUserDto } from '../user/dto/create-user.dto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +21,7 @@ export class AuthService {
 
     const isPasswordMatch: boolean = await bcrypt.compare(
       password,
-      user.password_hash,
+      user.passwordHash,
     );
 
     if (!isPasswordMatch) {
@@ -41,7 +41,7 @@ export class AuthService {
     const payload = {
       username: user.email,
       sub: user.id,
-      role: user.user_role,
+      role: user.userRole,
     };
     return {
       access_token: this.jwtService.sign(payload),
@@ -60,7 +60,7 @@ export class AuthService {
       throw new BadRequestException('User with this email existed');
     }
 
-    const user = await this.userService.create(payload);
-    return this.login(user);
+    const userResponse = await this.userService.create(payload);
+    return this.login(userResponse.data as User);
   }
 }

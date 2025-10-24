@@ -5,7 +5,7 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { BlogStatus } from '../entities/blog.entity';
+import { BlogStatusEnum } from '@prisma/client';
 
 export class CreateBlogDto {
   @IsString()
@@ -16,15 +16,15 @@ export class CreateBlogDto {
 
   @IsString()
   @IsOptional()
-  featured_image?: string;
+  featuredImage?: string;
 
   @IsOptional()
-  @IsEnum(BlogStatus)
-  status?: BlogStatus;
+  @IsEnum(BlogStatusEnum)
+  status?: BlogStatusEnum;
 
   @IsOptional()
   @IsDateString()
-  published_at?: string;
+  publishedAt?: string;
 
   @IsOptional()
   @IsString({ each: true })
@@ -32,5 +32,5 @@ export class CreateBlogDto {
 
   @IsOptional()
   @IsUUID()
-  category_id?: string;
+  categoryId?: string;
 }

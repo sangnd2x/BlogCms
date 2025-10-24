@@ -1,31 +1,30 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Comment } from './entities/comment.entity';
-import { Repository } from 'typeorm';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class CommentService {
-  constructor(
-    @InjectRepository(Comment)
-    private readonly commentRepository: Repository<Comment>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
   async create(createCommentDto: CreateCommentDto, userId: string) {
-    const comment = this.commentRepository.create({
-      ...createCommentDto,
-      created_by: userId,
+    const comment = await this.prisma.comment.create({
+      data: {
+        content: createCommentDto.content,
+        blogId: createCommentDto.blogId,
+        userId: userId,
+        createdBy: userId,
+      },
     });
 
-    return await this.commentRepository.save(comment);
+    return comment;
   }
 
   async findAll() {
-    return this.commentRepository.find({ where: { is_deleted: false } });
+    return this.prisma.comment.findMany({ where: { isDeleted: false } });
   }
 
   async findOne(id: string) {
-    return this.commentRepository.findOneBy({ id });
+    return this.prisma.comment.findUnique({ where: { id } });
   }
 
   async update(id: string, updateCommentDto: UpdateCommentDto, userId: string) {
@@ -35,10 +34,14 @@ export class CommentService {
       throw new NotFoundException('Comment not found');
     }
 
-    return this.commentRepository.update(id, {
-      ...updateCommentDto,
-      updated_by: userId,
-      updated_on: new Date(),
+    return this.prisma.comment.update({
+      where: { id },
+      data: {
+        ...(updateCommentDto.content && { content: updateCommentDto.content }),
+        ...(updateCommentDto.blogId && { blogId: updateCommentDto.blogId }),
+        updatedBy: userId,
+        updatedOn: new Date(),
+      },
     });
   }
 
@@ -49,10 +52,13 @@ export class CommentService {
       throw new NotFoundException('Comment not found');
     }
 
-    return this.commentRepository.update(id, {
-      is_deleted: true,
-      deleted_by: userId,
-      deleted_on: new Date(),
+    return this.prisma.comment.update({
+      where: { id },
+      data: {
+        isDeleted: true,
+        deletedBy: userId,
+        deletedOn: new Date(),
+      },
     });
   }
 }

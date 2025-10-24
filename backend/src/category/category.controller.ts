@@ -13,7 +13,8 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { AdminGuard } from '../auth/guards/admin.guard';
 import { GetUser } from '../common/decorators/user.decorator';
-import { User } from '../user/entities/user.entity';
+import { User } from '@prisma/client';
+import { Public } from '../common/decorators/public.decorator';
 
 @Controller('categories')
 export class CategoryController {

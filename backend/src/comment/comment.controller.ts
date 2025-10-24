@@ -12,7 +12,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { GetUser } from '../common/decorators/user.decorator';
-import { User } from '../user/entities/user.entity';
+import { User } from '@prisma/client';
 
 @Controller('comments')
 export class CommentController {

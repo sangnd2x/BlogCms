@@ -2,56 +2,59 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { ArticleQueryParams } from './params/article-query.param';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Blog, BlogStatus } from './entities/blog.entity';
-import { Brackets, Repository } from 'typeorm';
+import { Blog, BlogStatusEnum, Prisma } from '@prisma/client';
 import { ApiResponseDto } from '../common/response/ApiResponseDto';
-
-interface ViewCountResult {
-  total: string;
-}
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class BlogService {
-  constructor(
-    @InjectRepository(Blog)
-    private readonly articleRepository: Repository<Blog>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
   async create(
     createArticleDto: CreateBlogDto,
-    userId: string,
+    uuserId: string,
   ): Promise<ApiResponseDto<Blog>> {
     const slug = createArticleDto.title.replace(/\s+/g, '-');
 
-    const post = this.articleRepository.create({
-      ...createArticleDto,
-      slug: slug,
-      author_id: userId,
-      created_by: userId,
-      published_at:
-        createArticleDto.status === BlogStatus.PUBLISHED
-          ? createArticleDto.published_at || new Date()
-          : createArticleDto.published_at,
+    const newBlog = await this.prisma.blog.create({
+      data: {
+        title: createArticleDto.title,
+        content: createArticleDto.content,
+        featuredImage: createArticleDto.featuredImage,
+        slug: slug,
+        status: createArticleDto.status || BlogStatusEnum.DRAFT,
+        publishedAt:
+          createArticleDto.status === BlogStatusEnum.PUBLISHED
+            ? createArticleDto.publishedAt
+              ? new Date(createArticleDto.publishedAt)
+              : new Date()
+            : createArticleDto.publishedAt
+              ? new Date(createArticleDto.publishedAt)
+              : null,
+        tags: createArticleDto.tags || [],
+        categoryId: createArticleDto.categoryId,
+        authorId: uuserId,
+        createdBy: uuserId,
+      },
     });
 
-    await this.articleRepository.save(post);
     return {
-      data: post,
+      data: newBlog,
       message: 'Blog created successfully',
     };
   }
 
   async countArticles() {
-    return this.articleRepository.count();
+    return this.prisma.blog.count();
   }
 
   async countViewCounts() {
-    const result = await this.articleRepository
-      .createQueryBuilder('article')
-      .select('SUM(article.views_count)', 'total')
-      .getRawOne<ViewCountResult>();
+    const result = await this.prisma.blog.aggregate({
+      _sum: {
+        viewCounts: true,
+      },
+    });
 
-    return parseInt(result?.total || '0', 10);
+    return result._sum.viewCounts || 0;
   }
 
   async findAll(
@@ -61,94 +64,98 @@ export class BlogService {
       search,
       title,
       status,
-      author_id,
+      authorId,
       category,
       tags,
-      published_at,
+      publishedAt,
       page = 1,
       limit = 10,
-      sort_by = 'created_on',
-      sort_order = 'DESC',
+      sortBy = 'createdOn',
+      sortOrder = 'DESC',
     } = queryParams;
 
-    const query = this.articleRepository
-      .createQueryBuilder('article')
-      .leftJoinAndSelect('article.author', 'author')
-      .leftJoinAndSelect('article.category', 'category')
-      .where('article.is_active = :is_active', { is_active: true });
+    // Build where clause
+    const where: Prisma.BlogWhereInput = {
+      isActive: true,
+    };
 
     if (search) {
-      query.andWhere(
-        new Brackets((qb) => {
-          qb.where('article.title ILIKE :search', { search: `%${search}%` })
-            .orWhere('article.content ILIKE :search', { search: `%${search}%` })
-            .orWhere('author.name ILIKE :search', { search: `%${search}%` });
-        }),
-      );
+      where.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { content: { contains: search, mode: 'insensitive' } },
+        { user: { name: { contains: search, mode: 'insensitive' } } },
+      ];
     }
 
     if (title) {
-      query.andWhere(
-        '(article.title ILIKE :search OR article.content ILIKE :search)',
-        {
-          search: `%${title}%`,
-        },
-      );
+      where.OR = [
+        { title: { contains: title, mode: 'insensitive' } },
+        { content: { contains: title, mode: 'insensitive' } },
+      ];
     }
 
     if (status) {
-      query.andWhere('article.status = :status', { status });
+      where.status = status as BlogStatusEnum;
     }
 
-    if (author_id) {
-      query.andWhere('article.author_id = :author_id', { author_id });
+    if (authorId) {
+      where.authorId = authorId;
     }
 
     if (category) {
       const categoryIds = category.split(',').map((x) => x.trim());
-      query.andWhere('article.category_id IN (:...categoryIds)', {
-        categoryIds,
-      });
+      where.categoryId = { in: categoryIds };
     }
 
-    if (tags && tags.length > 0) {
+    if (tags) {
       const tagArr = tags.split(',').map((x) => x.trim());
-      query.andWhere('article.tags IN (:...tagArr)', { tagArr });
+      where.tags = { hasSome: tagArr };
     }
 
-    if (published_at) {
-      const [startDate, endDate] = published_at.split(',');
+    if (publishedAt) {
+      const [startDate, endDate] = publishedAt.split(',');
       if (startDate && endDate) {
-        query.andWhere('article.published_at BETWEEN :startDate AND :endDate', {
-          startDate: new Date(startDate),
-          endDate: new Date(endDate + 'T23:59:59.999Z'),
-        });
+        where.publishedAt = {
+          gte: new Date(startDate),
+          lte: new Date(endDate + 'T23:59:59.999Z'),
+        };
       }
     }
 
-    // Add sorting
-    const validSortFields = [
-      'created_on',
-      'updated_at',
-      'title',
-      'published_at',
-      'views_count',
-    ];
-    const sortField = validSortFields.includes(sort_by)
-      ? sort_by
-      : 'created_on';
-    const orderDirection = sort_order.toLowerCase() === 'asc' ? 'ASC' : 'DESC';
+    // Map sort field to Prisma field names
+    const sortFieldMap: Record<string, string> = {
+      created_on: 'createdOn',
+      updated_at: 'updatedOn',
+      title: 'title',
+      publishedAt: 'publishedAt',
+      views_count: 'viewCounts',
+    };
 
-    query.orderBy(`article.${sortField}`, orderDirection);
+    const validSortFields = Object.keys(sortFieldMap);
+    const prismaField = sortFieldMap[sortBy] || 'createdOn';
+    const orderDirection = sortOrder.toLowerCase() === 'asc' ? 'asc' : 'desc';
 
     // Add pagination
     const skip = (page - 1) * limit;
-    query.skip(skip).take(limit);
 
-    const [articles, total] = await query.getManyAndCount();
+    const [blogs, total] = await Promise.all([
+      this.prisma.blog.findMany({
+        where,
+        include: {
+          user: { select: { id: true, name: true, email: true } },
+          category: { select: { id: true, name: true } },
+        },
+        orderBy: {
+          [prismaField]: orderDirection,
+        },
+        skip,
+        take: limit,
+      }),
+      this.prisma.blog.count({ where }),
+    ]);
 
     return {
-      data: articles,
+      data: blogs,
       meta: {
         total,
         page,
@@ -160,73 +167,94 @@ export class BlogService {
   }
 
   async findBySlug(slug: string): Promise<ApiResponseDto<Blog>> {
-    const article = await this.articleRepository.findOne({
+    const blog = await this.prisma.blog.findFirst({
       where: {
-        title: slug.replace(/-/g, ' '),
-        is_active: true,
+        slug: slug,
+        isActive: true,
       },
-      relations: ['author', 'category'],
+      include: {
+        user: { select: { id: true, name: true, email: true } },
+        category: { select: { id: true, name: true } },
+      },
     });
 
-    if (!article) {
-      throw new NotFoundException('Article not found');
+    if (!blog) {
+      throw new NotFoundException('Blog not found');
     }
 
     // Increment view count
-    await this.articleRepository.update(article.id, {
-      views_count: article.views_count + 1,
+    await this.prisma.blog.update({
+      where: { id: blog.id },
+      data: {
+        viewCounts: blog.viewCounts + 1,
+      },
     });
 
     return {
-      data: article,
+      data: blog,
       message: 'Blogs retrieved successfully',
     };
   }
 
   async findOne(id: string): Promise<ApiResponseDto<Blog>> {
-    const article = await this.articleRepository.findOne({
+    const blog = await this.prisma.blog.findFirst({
       where: {
         id,
-        is_active: true,
+        isActive: true,
       },
-      relations: ['author', 'category'],
+      include: {
+        user: { select: { id: true, name: true, email: true } },
+        category: { select: { id: true, name: true } },
+      },
     });
 
-    if (!article) {
-      throw new NotFoundException('Article not found');
+    if (!blog) {
+      throw new NotFoundException('Blog not found');
     }
 
-    return { data: article, message: 'Blogs retrieved successfully' };
+    return { data: blog as any, message: 'Blogs retrieved successfully' };
   }
 
-  async update(id: string, updateBlogDto: UpdateBlogDto, userId: string) {
-    const article = await this.findOne(id);
+  async update(id: string, updateBlogDto: UpdateBlogDto, uuserId: string) {
+    const blog = await this.findOne(id);
 
-    if (!article) {
-      throw new NotFoundException('Article not found');
+    if (!blog) {
+      throw new NotFoundException('Blog not found');
     }
 
-    const dataToUpdate = {
-      ...updateBlogDto,
-      updated_by: userId,
+    const dataToUpdate: Prisma.BlogUpdateInput = {
+      ...(updateBlogDto.title && { title: updateBlogDto.title }),
+      ...(updateBlogDto.content && { content: updateBlogDto.content }),
+      ...(updateBlogDto.featuredImage && {
+        featuredImage: updateBlogDto.featuredImage,
+      }),
+      ...(updateBlogDto.status && { status: updateBlogDto.status }),
+      ...(updateBlogDto.tags && { tags: updateBlogDto.tags }),
+      ...(updateBlogDto.categoryId && {
+        categoryId: updateBlogDto.categoryId,
+      }),
+      ...(updateBlogDto.isActive !== undefined && {
+        isActive: updateBlogDto.isActive,
+      }),
+      updatedBy: uuserId,
+      updatedOn: new Date(),
     };
 
-    console.log('dataToUpdate', dataToUpdate);
-
-    // If status is being changed to published, set published_at
+    // If status is being changed to published, set publishedAt
     if (
-      dataToUpdate.status === BlogStatus.PUBLISHED &&
-      article.data.status !== BlogStatus.PUBLISHED
+      updateBlogDto.status === BlogStatusEnum.PUBLISHED &&
+      blog.data.status !== BlogStatusEnum.PUBLISHED
     ) {
-      dataToUpdate.published_at =
-        dataToUpdate.published_at || new Date().toISOString();
+      dataToUpdate.publishedAt = updateBlogDto.publishedAt
+        ? new Date(updateBlogDto.publishedAt)
+        : new Date();
+    } else if (updateBlogDto.publishedAt) {
+      dataToUpdate.publishedAt = new Date(updateBlogDto.publishedAt);
     }
 
-    // await this.articleRepository.update(id, dataToUpdate);
-
-    const updatedBlog = await this.articleRepository.save({
-      ...article.data,
-      ...dataToUpdate,
+    const updatedBlog = await this.prisma.blog.update({
+      where: { id },
+      data: dataToUpdate,
     });
 
     return {
@@ -235,18 +263,21 @@ export class BlogService {
     };
   }
 
-  async remove(id: string, userId: string) {
-    const article = await this.findOne(id);
+  async remove(id: string, uuserId: string) {
+    const blog = await this.findOne(id);
 
-    if (!article) {
-      throw new NotFoundException('Article not found');
+    if (!blog) {
+      throw new NotFoundException('Blog not found');
     }
 
-    await this.articleRepository.update(id, {
-      is_active: false,
-      is_deleted: true,
-      deleted_by: userId,
-      deleted_on: new Date(),
+    await this.prisma.blog.update({
+      where: { id },
+      data: {
+        isActive: false,
+        isDeleted: true,
+        deletedBy: uuserId,
+        deletedOn: new Date(),
+      },
     });
 
     return {

@@ -14,7 +14,7 @@ import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { AdminGuard } from '../auth/guards/admin.guard';
 import { GetUser } from '../common/decorators/user.decorator';
-import { User } from '../user/entities/user.entity';
+import { User } from '@prisma/client';
 import { Public } from '../common/decorators/public.decorator';
 import { ArticleQueryParams } from './params/article-query.param';
 

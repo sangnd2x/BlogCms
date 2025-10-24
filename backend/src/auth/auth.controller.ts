@@ -2,8 +2,8 @@ import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from '../common/decorators/public.decorator';
 import { LocalAuthGuard } from './guards/local.guard';
-import CreateUserDto from '../user/dto/create-user.dto';
-import { User } from '../user/entities/user.entity';
+import { CreateUserDto } from '../user/dto/create-user.dto';
+import { User } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {

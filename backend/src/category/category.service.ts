@@ -1,32 +1,31 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Category } from './entities/category.entity';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class CategoryService {
-  constructor(
-    @InjectRepository(Category)
-    private readonly categoryRepository: Repository<Category>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
   async create(createCategoryDto: CreateCategoryDto, userId: string) {
     const slug = createCategoryDto.name.replace(/\s+/g, '-');
 
-    const category = this.categoryRepository.create({
-      ...createCategoryDto,
-      slug: slug,
-      created_by: userId,
+    const category = await this.prisma.category.create({
+      data: {
+        name: createCategoryDto.name,
+        description: createCategoryDto.description,
+        color: createCategoryDto.color,
+        slug: slug,
+        createdBy: userId,
+      },
     });
 
-    return this.categoryRepository.save(category);
+    return category;
   }
 
   async findAll() {
-    const categories = await this.categoryRepository.find({
+    const categories = await this.prisma.category.findMany({
       where: {
-        is_active: true,
+        isActive: true,
       },
     });
 
@@ -39,7 +38,7 @@ export class CategoryService {
   }
 
   async findOne(id: string) {
-    return this.categoryRepository.findOne({ where: { id } });
+    return this.prisma.category.findUnique({ where: { id } });
   }
 
   async update(
@@ -52,10 +51,21 @@ export class CategoryService {
     if (!category) {
       throw new NotFoundException('Category not found');
     }
-    updateCategoryDto.updated_by = userId;
 
-    await this.categoryRepository.update(id, updateCategoryDto);
-    return this.findOne(id);
+    const updatedCategory = await this.prisma.category.update({
+      where: { id },
+      data: {
+        ...(updateCategoryDto.name && { name: updateCategoryDto.name }),
+        ...(updateCategoryDto.description && {
+          description: updateCategoryDto.description,
+        }),
+        ...(updateCategoryDto.color && { color: updateCategoryDto.color }),
+        updatedBy: userId,
+        updatedOn: new Date(),
+      },
+    });
+
+    return updatedCategory;
   }
 
   async remove(id: string, userId: string) {
@@ -65,11 +75,14 @@ export class CategoryService {
       throw new NotFoundException('Category not found');
     }
 
-    return await this.categoryRepository.update(id, {
-      is_active: false,
-      is_deleted: true,
-      deleted_by: userId,
-      deleted_on: new Date(),
+    return await this.prisma.category.update({
+      where: { id },
+      data: {
+        isActive: false,
+        isDeleted: true,
+        deletedBy: userId,
+        deletedOn: new Date(),
+      },
     });
   }
 }

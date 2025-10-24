@@ -1,7 +1,7 @@
 import { IsEmail, IsEnum, IsString } from 'class-validator';
-import { UserRole } from '../entities/user.entity';
+import { UserRoleEnum } from '@prisma/client';
 
-class CreateUserDto {
+export class CreateUserDto {
   @IsEmail()
   @IsString()
   email: string;
@@ -12,8 +12,6 @@ class CreateUserDto {
   @IsString()
   password: string;
 
-  @IsEnum(UserRole)
-  user_role: UserRole;
+  @IsEnum(UserRoleEnum)
+  userRole: UserRoleEnum;
 }
-
-export default CreateUserDto;

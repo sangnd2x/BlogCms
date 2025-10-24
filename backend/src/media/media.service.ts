@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMediaDto } from './dto/create-media.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Media } from './entities/media.entity';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class MediaService {
-  constructor(
-    @InjectRepository(Media)
-    private readonly mediaRepository: Repository<Media>,
-  ) {}
-  create(createMediaDto: CreateMediaDto, userId: string) {
-    const media = this.mediaRepository.create({
-      ...createMediaDto,
-      blog_id: userId,
-    });
+  constructor(private readonly prisma: PrismaService) {}
 
-    return this.mediaRepository.save(media);
+  create(createMediaDto: CreateMediaDto, blogId: string) {
+    return this.prisma.media.create({
+      data: {
+        url: createMediaDto.url,
+        filename: createMediaDto.filename,
+        originalName: createMediaDto.originalName,
+        type: createMediaDto.type,
+        blogId: blogId,
+        createdBy: blogId,
+      },
+    });
   }
 
   // findAll() {

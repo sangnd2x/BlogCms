@@ -5,8 +5,5 @@ export class CreateCommentDto {
   content: string;
 
   @IsUUID()
-  article_id: string;
-
-  @IsUUID()
-  user_id: string;
+  blogId: string;
 }

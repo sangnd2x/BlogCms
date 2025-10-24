@@ -1,6 +1,6 @@
 import { IsOptional, IsString, IsEnum, IsIn, IsArray } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { BlogStatus } from '../entities/blog.entity';
+import { BlogStatusEnum } from '@prisma/client';
 
 export class ArticleQueryParams {
   @IsOptional()
@@ -13,11 +13,11 @@ export class ArticleQueryParams {
 
   @IsOptional()
   @IsString()
-  sort_by?: string = 'created_on';
+  sortBy?: string = 'createdOn';
 
   @IsOptional()
   @IsIn(['ASC', 'DESC', 'asc', 'desc'])
-  sort_order?: 'ASC' | 'DESC' = 'DESC';
+  sortOrder?: 'ASC' | 'DESC' = 'DESC';
 
   @IsOptional()
   @IsString()
@@ -28,12 +28,12 @@ export class ArticleQueryParams {
   title?: string;
 
   @IsOptional()
-  @IsEnum(BlogStatus)
-  status?: BlogStatus;
+  @IsEnum(BlogStatusEnum)
+  status?: BlogStatusEnum;
 
   @IsOptional()
   @IsString()
-  author_id?: string;
+  authorId?: string;
 
   @IsOptional()
   @IsString()
@@ -41,7 +41,7 @@ export class ArticleQueryParams {
 
   @IsOptional()
   @IsString()
-  published_at?: string;
+  publishedAt?: string;
 
   @IsOptional()
   @IsString()

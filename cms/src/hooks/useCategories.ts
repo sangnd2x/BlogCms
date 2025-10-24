@@ -11,6 +11,7 @@ export const useCategories = () => {
       return response.data.map(category => ({
         label: category.name,
         value: category.id,
+        color: category.color,
       }));
     },
     staleTime: 5 * 60 * 1000,

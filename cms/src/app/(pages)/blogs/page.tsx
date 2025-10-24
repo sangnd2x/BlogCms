@@ -82,7 +82,9 @@ const ListBlogs = () => {
     [pagination.pageIndex, pagination.pageSize, filters, sort, globalSearch]
   );
 
-  const { data: articles, isLoading } = useBlogs(queryParams);
+  const { data: blogs, isLoading } = useBlogs(queryParams);
+
+  console.log(blogs);
 
   const deleteBlogMutation = useMutation({
     mutationFn: (id: string) => deleteBlog(id),
@@ -140,6 +142,8 @@ const ListBlogs = () => {
         cell: info => {
           const color = info.getValue()?.color;
           const name = info.getValue()?.name;
+
+          console.log(info.getValue());
           return <CustomTag color={color} label={name} />;
         },
         accessorFn: row => row.category,
@@ -154,7 +158,6 @@ const ListBlogs = () => {
             type: "multiSelect",
             placeholder: "Search category...",
             options: categoryOptions,
-            isLoading: categoriesLoading,
           },
         },
       },
@@ -328,8 +331,8 @@ const ListBlogs = () => {
 
       <DataTable
         columns={columns}
-        data={articles?.data}
-        pageCount={articles?.meta?.totalPages ?? 0}
+        data={blogs?.data}
+        pageCount={blogs?.meta?.totalPages ?? 0}
         pagination={pagination}
         onPaginationChange={setPagination}
         showFilters={showFilters}

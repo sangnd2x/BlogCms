@@ -12,11 +12,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly configService: ConfigService) {
     const secret = configService.get('JWT_SECRET');
 
-    console.log(
-      'JWT Strategy initialized with secret:',
-      secret ? 'EXISTS' : 'MISSING',
-    );
-
     if (!secret) {
       throw new Error('JWT_SECRET environment variable is required');
     }
@@ -29,7 +24,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(payload: JwtPayload) {
-    console.log('JWT Payload:', payload);
     return {
       id: payload.sub,
       username: payload.username,

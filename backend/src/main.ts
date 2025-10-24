@@ -21,12 +21,13 @@ async function bootstrap() {
   app.enableCors({
     origin: process.env.CORS_ORIGINS?.split(',').map((origin) =>
       origin.trim(),
-    ) || ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3100'],
+    ) || [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3100',
+    ],
     credentials: true,
   });
-
-  console.log('API Prefix:', process.env.API_PREFIX || 'api/v1');
-  console.log('CORS Origins:', process.env.CORS_ORIGINS);
 
   // Serve uploaded files statically
   const publicPath = join(__dirname, '..', 'public');

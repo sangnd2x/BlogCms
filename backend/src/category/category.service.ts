@@ -2,11 +2,16 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { ApiResponseDto } from '../common/response/ApiResponseDto';
+import { Category } from '@prisma/client';
 
 @Injectable()
 export class CategoryService {
   constructor(private readonly prisma: PrismaService) {}
-  async create(createCategoryDto: CreateCategoryDto, userId: string) {
+  async create(
+    createCategoryDto: CreateCategoryDto,
+    userId: string,
+  ): Promise<ApiResponseDto<Category>> {
     const slug = createCategoryDto.name.replace(/\s+/g, '-');
 
     const category = await this.prisma.category.create({
@@ -19,10 +24,13 @@ export class CategoryService {
       },
     });
 
-    return category;
+    return {
+      data: category,
+      message: 'Category created successfully',
+    };
   }
 
-  async findAll() {
+  async findAll(): Promise<ApiResponseDto<Category[]>> {
     const categories = await this.prisma.category.findMany({
       where: {
         isActive: true,
@@ -34,18 +42,28 @@ export class CategoryService {
       meta: {
         total: categories.length,
       },
+      message: 'Categories retrieved successfully',
     };
   }
 
-  async findOne(id: string) {
-    return this.prisma.category.findUnique({ where: { id } });
+  async findOne(id: string): Promise<ApiResponseDto<Category>> {
+    const category = await this.prisma.category.findUnique({ where: { id } });
+
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+
+    return {
+      data: category,
+      message: 'Category retrieved successfully',
+    };
   }
 
   async update(
     id: string,
     updateCategoryDto: UpdateCategoryDto,
     userId: string,
-  ) {
+  ): Promise<ApiResponseDto<Category>> {
     const category = await this.findOne(id);
 
     if (!category) {
@@ -65,17 +83,20 @@ export class CategoryService {
       },
     });
 
-    return updatedCategory;
+    return {
+      data: updatedCategory,
+      message: 'Category updated successfully',
+    };
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: string, userId: string): Promise<ApiResponseDto<{}>> {
     const category = await this.findOne(id);
 
     if (!category) {
       throw new NotFoundException('Category not found');
     }
 
-    return await this.prisma.category.update({
+    const deletedCategory = await this.prisma.category.update({
       where: { id },
       data: {
         isActive: false,
@@ -84,5 +105,10 @@ export class CategoryService {
         deletedOn: new Date(),
       },
     });
+
+    return {
+      data: {},
+      message: 'Category deleted successfully',
+    };
   }
 }

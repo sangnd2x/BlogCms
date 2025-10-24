@@ -469,4 +469,25 @@
     .text-error {
         @apply text-error-600 dark:text-error-400;
     }
+
+    .react-colorful {
+        height: 250px;
+      }
+      .react-colorful__saturation {
+        bottom: 30px;
+        border-radius: 3px 3px 0 0;
+      }
+      .react-colorful__hue {
+        height: 30px;
+        border-radius: 0 0 3px 3px;
+      }
+      .react-colorful__saturation-pointer {
+        border-radius: 5px;
+      }
+      .react-colorful__hue-pointer {
+        border-radius: 2px;
+        width: 15px;
+        height: inherit;
+      }
+      
 }

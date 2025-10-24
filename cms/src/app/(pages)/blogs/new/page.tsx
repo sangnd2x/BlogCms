@@ -16,6 +16,7 @@ import BlogPreview from "@/app/(pages)/blogs/components/BlogPreview";
 import BlogForm from "@/app/(pages)/blogs/components/BlogForm";
 import { useForm } from "react-hook-form";
 import { BlogStatus } from "@/types/blog.type";
+import { convertTitleToSlug } from "../../../../helpers/slugConverter";
 
 const NewBlogPage = () => {
   const router = useRouter();
@@ -102,22 +103,6 @@ const NewBlogPage = () => {
       tags.filter(tag => tag !== tagToRemove),
       { shouldValidate: true }
     );
-  };
-
-  const convertTitleToSlug = (title: string) => {
-    if (!title) {
-      return;
-    }
-
-    return title
-      .toLowerCase() // Convert to lowercase
-      .trim() // Remove leading/trailing whitespace
-      .normalize("NFD") // Normalize unicode characters (e.g., é → e)
-      .replace(/[\u0300-\u036f]/g, "") // Remove diacritics/accents
-      .replace(/[^\w\s-]/g, "") // Remove special characters except word chars, spaces, and hyphens
-      .replace(/\s+/g, "-") // Replace spaces with hyphens
-      .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
-      .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
   };
 
   const title = watch("title");

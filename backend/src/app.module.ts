@@ -11,6 +11,7 @@ import { CommentModule } from './comment/comment.module';
 import { HealthModule } from './health/health.module';
 import { MinioModule } from './minio/minio.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PrismaModule } from './prisma/prisma.module';
     CommentModule,
     HealthModule,
     MinioModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

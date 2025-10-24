@@ -143,7 +143,7 @@ export class BlogService {
         where,
         include: {
           user: { select: { id: true, name: true, email: true } },
-          category: { select: { id: true, name: true } },
+          category: { select: { id: true, name: true, color: true } },
         },
         orderBy: {
           [prismaField]: orderDirection,
@@ -174,7 +174,7 @@ export class BlogService {
       },
       include: {
         user: { select: { id: true, name: true, email: true } },
-        category: { select: { id: true, name: true } },
+        category: { select: { id: true, name: true, color: true } },
       },
     });
 
@@ -204,7 +204,7 @@ export class BlogService {
       },
       include: {
         user: { select: { id: true, name: true, email: true } },
-        category: { select: { id: true, name: true } },
+        category: { select: { id: true, name: true, color: true } },
       },
     });
 

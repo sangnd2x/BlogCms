@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CategoryResponseDto } from './dto/category.response.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { ApiResponseDto } from '../common/response/ApiResponseDto';
 import { Category } from '@prisma/client';
@@ -30,17 +31,36 @@ export class CategoryService {
     };
   }
 
-  async findAll(): Promise<ApiResponseDto<Category[]>> {
+  async findAll(): Promise<ApiResponseDto<CategoryResponseDto[]>> {
     const categories = await this.prisma.category.findMany({
       where: {
         isActive: true,
       },
+      include: {
+        _count: {
+          select: { blog: true },
+        },
+      },
     });
 
+    const categoriesWithBlogCount: CategoryResponseDto[] = categories.map(
+      (category) => ({
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+        description: category.description,
+        color: category.color,
+        blogCount: category._count.blog,
+        isActive: category.isActive,
+        createdOn: category.createdOn,
+        updatedOn: category.updatedOn,
+      }),
+    );
+
     return {
-      data: categories,
+      data: categoriesWithBlogCount,
       meta: {
-        total: categories.length,
+        total: categoriesWithBlogCount.length,
       },
       message: 'Categories retrieved successfully',
     };

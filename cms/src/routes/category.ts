@@ -15,12 +15,12 @@ const deleteCategory = async (id: string): Promise<ApiResponse<Category>> => {
   return await apiClient.delete(`/categories/${id}`);
 };
 
-const getCategories = async (params: any): Promise<ApiResponse<Category[]>> => {
-  return await apiClient.get(`/categories?${params.toString()}`);
+const getCategories = async (): Promise<ApiResponse<Category[]>> => {
+  return await apiClient.get(`/categories`);
 };
 
 const getCategory = async (id: string): Promise<ApiResponse<Category>> => {
-  return await apiClient.get(`/categories/admin/${id}`);
+  return await apiClient.get(`/categories/${id}`);
 };
 
 export { createCategory, deleteCategory, getCategories, updateCategory, getCategory };

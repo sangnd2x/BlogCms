@@ -41,7 +41,7 @@ const DialogButton: React.FC<Props> = ({
       <AlertDialogTrigger asChild>
         <Button variant={variant} size={size}>
           {icon}
-          <span className="capitalize">{label}</span>
+          {label ? <span className="capitalize">{label}</span> : null}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

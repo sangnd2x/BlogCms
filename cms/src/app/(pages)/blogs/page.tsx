@@ -2,7 +2,7 @@
 
 import { useBlogs } from "@/hooks/useBlogs";
 import { Blog } from "@/types/blog.type";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import DataTable from "@/components/shared/DataTable";
 import {
   ColumnDef,
@@ -15,7 +15,7 @@ import { formatDateTimeLocale } from "@/helpers/timeFormatter";
 import GlobalSearch from "@/components/shared/GlobalSearch";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Plus, Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCategories } from "@/hooks/useCategories";
 import TooltipButton from "@/components/shared/TooltipButton";
 import CustomTag from "@/components/shared/CustomTag";
@@ -26,8 +26,9 @@ import DialogButton from "@/components/shared/DialogButton";
 
 const ListBlogs = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const queryClient = useQueryClient();
-  const { data: categoryOptions = [], isLoading: categoriesLoading } = useCategories();
+  const { data: categoryOptions = [] } = useCategories();
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -37,6 +38,14 @@ const ListBlogs = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [showFilters, setShowFilters] = useState(true);
   const [globalSearch, setGlobalSearch] = useState("");
+
+  useEffect(() => {
+    const categoryId = searchParams.get("categoryId");
+    if (categoryId) {
+      setColumnFilters([{ id: "category", value: [categoryId] }]);
+    }
+  }, [searchParams]);
+
   const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
     right: ["actions"],
     left: ["title"],

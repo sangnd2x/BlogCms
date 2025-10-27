@@ -36,6 +36,7 @@ const MultiSelectFilter = ({
 
   // Get labels for selected values
   const selectedOptions = React.useMemo(() => {
+    if (!options || !Array.isArray(options)) return [];
     return options.filter(option => valueArray.includes(option.value));
   }, [options, valueArray]);
 
@@ -92,15 +93,17 @@ const MultiSelectFilter = ({
             <CommandInput placeholder={`Search ${placeholder.toLowerCase()}...`} />
             <CommandEmpty>{isLoading ? "Loading..." : "No results found."}</CommandEmpty>
             <CommandGroup className="max-h-64 overflow-auto">
-              {options.map(option => {
-                const isSelected = valueArray.includes(option.value);
-                return (
-                  <CommandItem key={option.value} value={option.label} onSelect={() => handleSelect(option.value)}>
-                    <Check className={cn("mr-2 h-4 w-4", isSelected ? "opacity-100" : "opacity-0")} />
-                    {option.label}
-                  </CommandItem>
-                );
-              })}
+              {options && Array.isArray(options) && options.length > 0 ? (
+                options.map(option => {
+                  const isSelected = valueArray.includes(option.value);
+                  return (
+                    <CommandItem key={option.value} value={option.label} onSelect={() => handleSelect(option.value)}>
+                      <Check className={cn("mr-2 h-4 w-4", isSelected ? "opacity-100" : "opacity-0")} />
+                      {option.label}
+                    </CommandItem>
+                  );
+                })
+              ) : null}
             </CommandGroup>
           </Command>
         </PopoverContent>

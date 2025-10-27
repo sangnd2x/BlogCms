@@ -4,19 +4,13 @@ import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { deleteBlog, getBlog } from "@/routes/blog";
-import { ArrowLeft, Pencil, User, Trash2, Calendar, FolderOpenIcon, Eye, Tag, Clock } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import TooltipButton from "@/components/shared/TooltipButton";
 import { Button } from "@/components/ui/button";
 import DialogButton from "@/components/shared/DialogButton";
-import { Blog, BlogStatus } from "@/types/blog.type";
+import { BlogStatus } from "@/types/blog.type";
 import { toast } from "sonner";
-import CustomTag from "@/components/shared/CustomTag";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { formatDateTime } from "@/helpers/timeFormatter";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import DOMPurify from "dompurify";
-import { lorem } from "next/dist/next-devtools/dev-overlay/utils/lorem";
 import BlogPreview from "@/app/(pages)/blogs/components/BlogPreview";
 
 interface Props {}
@@ -88,8 +82,6 @@ const ViewBlogPage: React.FC<Props> = () => {
       ALLOWED_ATTR: ["href", "src", "alt", "class", "target", "rel"],
     });
   };
-
-
 
   const getStatusColor = (status?: BlogStatus) => {
     if (!status) {

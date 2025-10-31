@@ -10,13 +10,13 @@ pipeline {
         POSTGRES_DB = 'blogcms_prod'
         POSTGRES_USER = 'bloguser'
         API_PREFIX = 'api/v1'
-        CORS_ORIGINS = 'http://192.168.1.128:3200,http://192.168.1.128:3000'
+        CORS_ORIGINS = 'http://192.168.100.128:3200,http://192.168.100.128:3000'
         MAX_FILE_SIZE = '5242880'
         UPLOAD_DIR = './uploads'
         JWT_EXPIRES_IN = '1d'
 
         // Frontend variables
-        NEXT_PUBLIC_API_URL = 'http://192.168.1.128:3000'
+        NEXT_PUBLIC_API_URL = 'http://192.168.100.128:3000'
         NEXT_PUBLIC_APP_NAME = 'Blog CMS'
         NEXT_PUBLIC_APP_VERSION = '1.0.0'
     }
@@ -130,7 +130,7 @@ EOF
                             sleep 10
 
                             # Run migrations inside the backend container
-                            docker exec blogcms_backend_prod npm run migration:run:prod
+                            docker exec blogcms_backend_prod npx prisma migrate
 
                             echo "Migrations completed successfully!"
                         '''
@@ -155,8 +155,8 @@ EOF
             sh '''
                 echo "=== DEPLOYMENT SUMMARY ==="
                 docker ps | grep blogcms
-                echo "Backend API: http://192.168.1.128:3000/api/v1"
-                echo "Health Check: http://192.168.1.128:3000/api/v1/health"
+                echo "Backend API: http://192.168.100.128:3000/api/v1"
+                echo "Health Check: http://192.168.100.128:3000/api/v1/health"
             '''
         }
         failure {

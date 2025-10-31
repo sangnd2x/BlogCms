@@ -130,7 +130,7 @@ EOF
                             sleep 10
 
                             # Run migrations inside the backend container
-                            docker exec blogcms_backend_prod npx prisma migrate
+                            docker exec blogcms_backend_prod npx prisma migrate deploy
 
                             echo "Migrations completed successfully!"
                         '''

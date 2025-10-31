@@ -1,18 +1,17 @@
-# dockerfile.prod
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
-
-# Clean install to avoid corrupted lock file issues
 RUN npm ci --no-audit --no-fund
 
-# Copy source code
-COPY . .
+# Copy prisma files
+COPY prisma ./prisma
 
-# Build the application
+# Generate Prisma Client
+RUN npx prisma generate
+
+COPY . .
 RUN npm run build
 
 # Production stage
@@ -20,26 +19,29 @@ FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
 
-# Install only production dependencies with clean cache
+# Install production deps + prisma CLI (CHANGED)
 RUN npm ci --only=production --no-audit --no-fund && \
+  npm install prisma --save-dev && \
   npm cache clean --force
 
-# Copy built application from builder stage
+# Copy prisma schema AND migrations folder (ADDED)
+COPY --from=builder /app/prisma ./prisma
+
+# Generate client for production
+RUN npx prisma generate
+
+# Copy built app
 COPY --from=builder /app/dist ./dist
 
-# Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
   adduser -S nestjs -u 1001
 
-# Change ownership of app directory
 RUN chown -R nestjs:nodejs /app
 
 USER nestjs
 
 EXPOSE 3000
 
-# Run the built application
 CMD ["node", "dist/src/main.js"]

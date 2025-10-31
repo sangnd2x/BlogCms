@@ -1,9 +1,14 @@
 import { apiClient } from "@/lib/axios/apiClient";
 import { LoginResponse } from "@/types/auth.type";
-import type { LoginFormData } from "@/lib/zod/authForm";
+import { ApiResponse } from "@/types/apiResponse.type";
+import type { LoginFormData, RegisterFormData } from "@/lib/zod/authForm";
 
-const login = async (data: LoginFormData): Promise<LoginResponse> => {
-  return apiClient.post<LoginResponse>("/auth/login", data);
+const login = async (data: LoginFormData): Promise<ApiResponse<LoginResponse>> => {
+  return apiClient.post("/auth/login", data);
 };
 
-export { login };
+const register = async (data: Omit<RegisterFormData, "confirmPassword">): Promise<ApiResponse<LoginResponse>> => {
+  return apiClient.post("/auth/register", data);
+};
+
+export { login, register };

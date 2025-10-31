@@ -15,9 +15,10 @@ import BlogPreview from "@/app/(pages)/blogs/components/BlogPreview";
 interface Props {
   content: string;
   onChange: (content: string) => void;
+  onImageUploaded?: (imageUrl: string) => void;
 }
 
-const RichTextEditor: React.FC<Props> = ({content, onChange}) => {
+const RichTextEditor: React.FC<Props> = ({content, onChange, onImageUploaded}) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -77,7 +78,7 @@ const RichTextEditor: React.FC<Props> = ({content, onChange}) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <RichTextEditorMenu editor={editor} />
+      <RichTextEditorMenu editor={editor} onImageUploaded={onImageUploaded} />
       <div className="flex gap-2 items-start">
         <div className="flex-1">
           <EditorContent editor={editor} />

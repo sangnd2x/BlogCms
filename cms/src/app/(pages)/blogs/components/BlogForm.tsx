@@ -27,6 +27,7 @@ interface Props {
   username?: string;
   userId?: string;
   className?: string;
+  onImageUploaded?: (imageUrl: string) => void;
 }
 
 const BlogForm: React.FC<Props> = ({
@@ -39,6 +40,7 @@ const BlogForm: React.FC<Props> = ({
   categoriesLoading,
   username,
   userId,
+  onImageUploaded,
 }) => {
   const [currentTag, setCurrentTag] = useState("");
 
@@ -152,7 +154,7 @@ const BlogForm: React.FC<Props> = ({
           name="content"
           control={control}
           render={({ field }) => {
-            return <RichTextEditor content={field.value} onChange={field.onChange} />;
+            return <RichTextEditor content={field.value} onChange={field.onChange} onImageUploaded={onImageUploaded} />;
           }}
         />
         {errors.content && <p className="text-sm text-red-500">{errors.content.message}</p>}

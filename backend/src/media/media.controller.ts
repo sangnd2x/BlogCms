@@ -6,9 +6,11 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  Param,
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { CreateMediaDto } from './dto/create-media.dto';
+import { MoveTempImagesDto } from './dto/move-temp-images.dto';
 import { AdminGuard } from '../auth/guards/admin.guard';
 import { GetUser } from '../common/decorators/user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -50,11 +52,12 @@ export class MediaController {
     }
 
     try {
+      // Upload to temporary folder
       const fileUrl = await this.minioService.uploadFile(
         file.buffer,
         file.originalname,
         file.mimetype,
-        'blog-images',
+        'temp/blog-images',
       );
 
       return {
@@ -67,6 +70,20 @@ export class MediaController {
       console.error('Error uploading file:', error);
       throw new BadRequestException('File upload failed');
     }
+  }
+
+  @UseGuards(AdminGuard)
+  @Post('move-temp-images/:blogId')
+  async moveTempImagesToBlog(
+    @Param('blogId') blogId: string,
+    @Body() moveTempImagesDto: MoveTempImagesDto,
+    @GetUser() user: User,
+  ) {
+    return this.mediaService.moveTempImagesToBlog(
+      blogId,
+      moveTempImagesDto,
+      user.id,
+    );
   }
 
   // @Get()

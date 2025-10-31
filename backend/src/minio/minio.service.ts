@@ -101,6 +101,25 @@ export class MinioService implements OnModuleInit {
     }
   }
 
+  async moveFile(
+    sourceObjectName: string,
+    destinationObjectName: string,
+  ): Promise<void> {
+    try {
+      // Copy file to new location
+      await this.minioClient.copyObject(
+        this.bucketName,
+        destinationObjectName,
+        `/${this.bucketName}/${sourceObjectName}`,
+      );
+      // Delete the source file
+      await this.minioClient.removeObject(this.bucketName, sourceObjectName);
+    } catch (error) {
+      this.logger.error('Error moving file:', error);
+      throw new Error('File move failed');
+    }
+  }
+
   async deleteFile(objectName: string): Promise<void> {
     try {
       await this.minioClient.removeObject(this.bucketName, objectName);

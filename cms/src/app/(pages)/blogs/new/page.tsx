@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { BlogFormData, blogFormSchema } from "@/lib/zod/blogForm";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createBlog } from "@/routes/blog";
+import { uploadImage } from "@/routes/media";
 import { toast } from "sonner";
 import BlogPreview from "@/app/(pages)/blogs/components/BlogPreview";
 import BlogForm from "@/app/(pages)/blogs/components/BlogForm";
@@ -25,13 +26,29 @@ const NewBlogPage = () => {
   const { data: categoryOptions = [], isLoading: categoriesLoading } = useCategories();
 
   const [submitType, setSubmitType] = useState<"draft" | "publish" | null>(null);
+  const [tempUploadedImages, setTempUploadedImages] = useState<string[]>([]);
 
   const createBlogMutation = useMutation({
     mutationFn: async (data: BlogFormData) => {
-      return createBlog(data);
+      // First, create the blog
+      const blogData = await createBlog(data);
+
+      // Then, move temp images to the blog folder if any exist
+      if (tempUploadedImages.length > 0) {
+        try {
+          await uploadImage.moveTempImagesToBlog(blogData.data.id, tempUploadedImages);
+        } catch (error) {
+          console.error("Error moving images:", error);
+          // Don't throw - blog was created successfully, images can be retried
+          toast?.error("Failed to move some images, but blog was created successfully");
+        }
+      }
+
+      return blogData;
     },
     onSuccess: data => {
       toast?.success(data.message);
+      setTempUploadedImages([]); // Clear temp images after successful creation
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
       router.push("/blogs");
     },
@@ -89,6 +106,10 @@ const NewBlogPage = () => {
 
   const handleGoBack = () => {
     router.back();
+  };
+
+  const handleImageUploaded = (imageUrl: string) => {
+    setTempUploadedImages(prev => [...prev, imageUrl]);
   };
 
   const handleAddTag = (tag: string) => {
@@ -174,6 +195,7 @@ const NewBlogPage = () => {
             categoriesLoading={categoriesLoading}
             username={user?.name}
             userId={user?.id}
+            onImageUploaded={handleImageUploaded}
           />
         </form>
       </div>

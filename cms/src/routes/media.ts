@@ -8,6 +8,16 @@ export interface UploadImageResponse {
   size: number;
 }
 
+export interface MovedImage {
+  oldUrl: string;
+  newUrl: string;
+}
+
+export interface MoveTempImagesResponse {
+  message: string;
+  movedImages: MovedImage[];
+}
+
 export const uploadImage = {
   uploadImage: async (
     file: File,
@@ -18,6 +28,15 @@ export const uploadImage = {
         const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
         onUploadProgress?.(progress);
       }
+    });
+  },
+
+  moveTempImagesToBlog: async (
+    blogId: string,
+    tempImageUrls: string[]
+  ): Promise<ApiResponse<MoveTempImagesResponse>> => {
+    return apiClient.post(`/media/move-temp-images/${blogId}`, {
+      tempImageUrls,
     });
   },
 };

@@ -28,6 +28,7 @@ import { uploadImage } from "@/routes/media";
 
 interface Props {
   editor: Editor | null;
+  onImageUploaded?: (imageUrl: string) => void;
 }
 
 type Options = {
@@ -38,7 +39,7 @@ type Options = {
   disabled?: boolean;
 };
 
-const RichTextEditorMenu: React.FC<Props> = ({ editor }) => {
+const RichTextEditorMenu: React.FC<Props> = ({ editor, onImageUploaded }) => {
   if (!editor) return null;
 
   const [isUploading, setIsUploading] = useState(false);
@@ -145,6 +146,11 @@ const RichTextEditorMenu: React.FC<Props> = ({ editor }) => {
             alt: file.name,
           })
           .run();
+      }
+
+      // Notify parent component that an image was uploaded
+      if (onImageUploaded) {
+        onImageUploaded(uploadedImageUrl);
       }
 
       toast.success(response.message || "Image uploaded successfully");

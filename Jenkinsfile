@@ -40,7 +40,7 @@ pipeline {
                         sh '''
                             echo "Creating production environment files..."
 
-                            # Create .env.prod.backend file - FIXED: Proper EOF closing
+                            # Create .env.prod.backend file
                             cat > .env.prod.backend << 'EOF'
 NODE_ENV=production
 PORT=3000
@@ -70,11 +70,22 @@ MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
 MINIO_PUBLIC_URL=https://api.minio.jamesnd.dev
 EOF
 
+                            # Create .env.prod.frontend file
+                            cat > .env.prod.frontend << 'EOF'
+NEXT_PUBLIC_API_URL=http://backend:3000
+NODE_ENV=production
+NEXT_TELEMETRY_DISABLED=1
+EOF
+
                             mkdir -p logs uploads
 
-                            echo "Environment file created successfully!"
+                            echo "Backend environment file created successfully!"
+                            echo "Frontend environment file created successfully!"
                             echo "Checking .env.prod.backend content:"
                             cat .env.prod.backend
+                            echo ""
+                            echo "Checking .env.prod.frontend content:"
+                            cat .env.prod.frontend
                         '''
                     }
                 }
@@ -142,8 +153,31 @@ EOF
         stage('Health Check') {
             steps {
                 sh '''
+                    echo "Waiting for services to be healthy..."
+
+                    # Wait for backend API to be ready
+                    for i in {1..30}; do
+                        if curl -f http://localhost:3000/api/v1/health > /dev/null 2>&1; then
+                            echo "✓ Backend API is healthy"
+                            break
+                        fi
+                        echo "Waiting for backend... ($i/30)"
+                        sleep 2
+                    done
+
+                    # Wait for frontend to be ready
+                    for i in {1..30}; do
+                        if curl -f http://localhost:3200 > /dev/null 2>&1; then
+                            echo "✓ Frontend is healthy"
+                            break
+                        fi
+                        echo "Waiting for frontend... ($i/30)"
+                        sleep 2
+                    done
+
+                    echo ""
                     echo "Containers status:"
-                    docker ps
+                    docker ps | grep blogcms
                 '''
             }
         }
@@ -151,12 +185,20 @@ EOF
 
     post {
         success {
-            echo '🎉 Backend deployment successful!'
+            echo '🎉 Deployment successful!'
             sh '''
                 echo "=== DEPLOYMENT SUMMARY ==="
                 docker ps | grep blogcms
-                echo "Backend API: http://192.168.100.128:3000/api/v1"
-                echo "Health Check: http://192.168.100.128:3000/api/v1/health"
+                echo ""
+                echo "✓ Frontend CMS: http://192.168.100.128:3200"
+                echo "✓ Backend API: http://192.168.100.128:3000/api/v1"
+                echo "✓ Health Check: http://192.168.100.128:3000/api/v1/health"
+                echo ""
+                echo "Services running:"
+                echo "- blogcms_frontend_prod (Next.js on port 3200)"
+                echo "- blogcms_backend_prod (NestJS on port 3000)"
+                echo "- blogcms_postgres (PostgreSQL on port 5433)"
+                echo "- blogcms_minio (MinIO on ports 9000, 9001)"
             '''
         }
         failure {
@@ -166,24 +208,39 @@ EOF
                 echo "Container status:"
                 docker ps -a | grep blogcms || echo "No containers found"
 
+                echo ""
+                echo "=== FRONTEND LOGS ==="
+                docker logs blogcms_frontend_prod --tail 50 || echo "No frontend logs"
+
+                echo ""
                 echo "=== BACKEND LOGS ==="
                 docker logs blogcms_backend_prod --tail 50 || echo "No backend logs"
 
+                echo ""
                 echo "=== POSTGRES LOGS ==="
                 docker logs blogcms_postgres --tail 20 || echo "No postgres logs"
 
+                echo ""
+                echo "=== MINIO LOGS ==="
+                docker logs blogcms_minio --tail 20 || echo "No MinIO logs"
+
+                echo ""
                 echo "=== ENVIRONMENT FILE CHECK ==="
                 if [ -f ".env.prod.backend" ]; then
-                    echo "Environment file exists, first 10 lines:"
-                    head -10 .env.prod.backend
+                    echo "Backend environment file exists"
                 else
-                    echo "Environment file not found"
+                    echo "Backend environment file not found"
+                fi
+                if [ -f ".env.prod.frontend" ]; then
+                    echo "Frontend environment file exists"
+                else
+                    echo "Frontend environment file not found"
                 fi
             '''
         }
         always {
             sh '''
-                rm -f .env.prod.backend
+                rm -f .env.prod.backend .env.prod.frontend
             '''
         }
     }

@@ -70,8 +70,8 @@ MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
 MINIO_PUBLIC_URL=https://api.minio.jamesnd.dev
 EOF
 
-                            # Create .env.prod.frontend file
-                            cat > .env.prod.frontend << 'EOF'
+                            # Create .env.prod.cms file
+                            cat > .env.prod.cms << 'EOF'
 NEXT_PUBLIC_API_URL=http://backend:3000
 NODE_ENV=production
 NEXT_TELEMETRY_DISABLED=1
@@ -84,8 +84,8 @@ EOF
                             echo "Checking .env.prod.backend content:"
                             cat .env.prod.backend
                             echo ""
-                            echo "Checking .env.prod.frontend content:"
-                            cat .env.prod.frontend
+                            echo "Checking .env.prod.cms content:"
+                            cat .env.prod.cms
                         '''
                     }
                 }
@@ -195,7 +195,7 @@ EOF
                 echo "✓ Health Check: http://192.168.100.128:3000/api/v1/health"
                 echo ""
                 echo "Services running:"
-                echo "- blogcms_frontend_prod (Next.js on port 3200)"
+                echo "- blogcms_cms_prod (Next.js on port 3200)"
                 echo "- blogcms_backend_prod (NestJS on port 3000)"
                 echo "- blogcms_postgres (PostgreSQL on port 5433)"
                 echo "- blogcms_minio (MinIO on ports 9000, 9001)"
@@ -210,7 +210,7 @@ EOF
 
                 echo ""
                 echo "=== FRONTEND LOGS ==="
-                docker logs blogcms_frontend_prod --tail 50 || echo "No frontend logs"
+                docker logs blogcms_cms_prod --tail 50 || echo "No frontend logs"
 
                 echo ""
                 echo "=== BACKEND LOGS ==="
@@ -231,7 +231,7 @@ EOF
                 else
                     echo "Backend environment file not found"
                 fi
-                if [ -f ".env.prod.frontend" ]; then
+                if [ -f ".env.prod.cms" ]; then
                     echo "Frontend environment file exists"
                 else
                     echo "Frontend environment file not found"
@@ -240,7 +240,7 @@ EOF
         }
         always {
             sh '''
-                rm -f .env.prod.backend .env.prod.frontend
+                rm -f .env.prod.backend .env.prod.cms
             '''
         }
     }

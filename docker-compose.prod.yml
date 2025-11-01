@@ -62,9 +62,9 @@ services:
     build:
       context: ./cms
       dockerfile: dockerfile.prod
-    container_name: blogcms_frontend_prod
+    container_name: blogcms_cms_prod
     env_file:
-      - .env.prod.frontend
+      - .env.prod.cms
     ports:
       - "3200:3000"
     depends_on:

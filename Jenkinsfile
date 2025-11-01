@@ -77,13 +77,6 @@ NODE_ENV=production
 NEXT_TELEMETRY_DISABLED=1
 EOF
 
-                    # Create .env.production for Next.js build (ADDED)
-                    cat > cms/.env.production << 'EOF'
-NEXT_PUBLIC_API_URL=http://192.168.100.128:3000
-NODE_ENV=production
-NEXT_TELEMETRY_DISABLED=1
-EOF
-
                             mkdir -p logs uploads
 
                             echo "Backend environment file created successfully!"
@@ -91,8 +84,8 @@ EOF
                             echo "Checking .env.prod.backend content:"
                             cat .env.prod.backend
                             echo ""
-                            echo "Checking .env.prod. content:"
-                            cat .env.prod.
+                            echo "Checking .env.prod.cms content:"
+                            cat .env.prod.cms
                         '''
                     }
                 }

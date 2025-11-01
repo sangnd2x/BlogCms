@@ -70,9 +70,16 @@ MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
 MINIO_PUBLIC_URL=https://api.minio.jamesnd.dev
 EOF
 
-                            # Create .env.prod.cms file
-                            cat > .env.prod.cms << 'EOF'
-NEXT_PUBLIC_API_URL=http://backend:3000
+                    # Create .env.prod.cms file
+                    cat > .env.prod.cms << 'EOF'
+NEXT_PUBLIC_API_URL=http://192.168.100.128:3000
+NODE_ENV=production
+NEXT_TELEMETRY_DISABLED=1
+EOF
+
+                    # Create .env.production for Next.js build (ADDED)
+                    cat > cms/.env.production << 'EOF'
+NEXT_PUBLIC_API_URL=http://192.168.100.128:3000
 NODE_ENV=production
 NEXT_TELEMETRY_DISABLED=1
 EOF
@@ -84,8 +91,8 @@ EOF
                             echo "Checking .env.prod.backend content:"
                             cat .env.prod.backend
                             echo ""
-                            echo "Checking .env.prod.cms content:"
-                            cat .env.prod.cms
+                            echo "Checking .env.prod. content:"
+                            cat .env.prod.
                         '''
                     }
                 }
@@ -231,7 +238,7 @@ EOF
                 else
                     echo "Backend environment file not found"
                 fi
-                if [ -f ".env.prod.cms" ]; then
+                if [ -f ".env.prod." ]; then
                     echo "Frontend environment file exists"
                 else
                     echo "Frontend environment file not found"
@@ -240,7 +247,7 @@ EOF
         }
         always {
             sh '''
-                rm -f .env.prod.backend .env.prod.cms
+                rm -f .env.prod.backend .env.prod.
             '''
         }
     }

@@ -3,7 +3,7 @@ import { store } from "@/lib/redux/store";
 import { clearCredentials } from "@/lib/redux/features/auth/authSlice";
 
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
   headers: {
     "Content-Type": "application/json",
   },

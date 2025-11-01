@@ -19,7 +19,10 @@ RUN npm run build
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production \
-  NEXT_TELEMETRY_DISABLED=1
+  NEXT_TELEMETRY_DISABLED=1 \
+  HOSTNAME="0.0.0.0" \  
+  PORT=3000              
+
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 
@@ -31,4 +34,4 @@ COPY --from=builder /app/.next/static ./.next/static
 USER nextjs
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+CMD ["node", "server.js"]  # Changed: Direct node execution
